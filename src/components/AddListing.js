@@ -1,10 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
 
+import { ToWords } from "to-words";
+
+import { supabase } from '../supabaseClient'
+
+const toWords = new ToWords({
+  localeCode: "en-IN",
+  converterOptions: {
+    currency: true,
+    ignoreDecimal: false,
+    ignoreZeroCurrency: false,
+    doNotAddOnly: false,
+    currencyOptions: {
+      // can be used to override defaults for the selected locale
+      name: "Rupee",
+      plural: "Rupees",
+      symbol: "₹",
+      fractionalUnit: {
+        name: "Paisa",
+        plural: "Paise",
+        symbol: "",
+      },
+    },
+  },
+});
+
+const searchOptions = {
+  componentRestrictions: { country: ["pk"] },
+};
+
 function AddListing() {
+
   const Homes = [
     "House",
     "Flat",
@@ -31,41 +61,118 @@ function AddListing() {
     "Other",
   ];
 
-  const numWords = require('num-words');
-  
+  const [dropdown, setdropdown] = useState(""); //propertytype
 
-  const [dropdown, setdropdown] = useState("");
-  
-  const [purpose,setPurpose] = useState(String);
-  const [properyTypeF,setPropertyTypeF] = useState(String);
-  const [City,setCity] = useState(String);
-  const [address, setaddress] = useState("");
-  const [formatedAddress, setFormatAddress] = useState("");
-  const [areaUnits,setareaUnits] = useState("");
-  const [units,setUnits] = useState("")
-  const [Ocupancy,setOcupancy] = useState("");
-  const [price,setPrice] = useState("");
-  const [priceWords,setPriceWords] = useState("");
-  const [propertyTitle,setPropertyTitle] = useState("");
-  const [description,setDescription] = useState("");
+  const [purpose, setPurpose] = useState(String);
+  const [properyTypeF, setPropertyTypeF] = useState(String);
+  const [City, setCity] = useState(String);
+  const [address, setaddress] = useState(""); //actual address we willl use
+  const [formatedAddress, setFormatAddress] = useState(""); //result stored if needed
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+  const [areaUnits, setareaUnits] = useState("");
+  const [units, setUnits] = useState("");
+  const [Ocupancy, setOcupancy] = useState("");
+  const [price, setPrice] = useState("");
+  const [priceWords, setPriceWords] = useState("");
+  const [propertyTitle, setPropertyTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedImage, setImage] = useState(undefined);
+  const [imagePath,setimagePath] = useState(String);
 
-  const handlePurpose = (e) => {setPurpose(e.target.value)}
-  const handleproperyTypeF = (e) => {setPropertyTypeF(e.target.value)}
-  const handleCity = (e) => {setCity(e.target.value)}
-  const handlePrice = (e) =>{
-    if(e.target.value >999999999){
+
+
+    const Getimageurl = (imagepath) =>{
+      return new Promise(function(resolve,reject){
+        const { data } = supabase.storage.from('properties').getPublicUrl(imagepath)
+        if(data!=null)
+        resolve(data.publicUrl);
+        else
+        reject('Image Path invalid!');
+      })
+    }
+
+    const handleSubmit = async (e)=>{
+
+      e.preventDefault();
+
+      supabase
+     .storage
+     .from('properties')
+     .upload(`UIDd${selectedImage.name}`+Math.random(), selectedImage)
+     .then(value=>{
+      console.log("Sent!: ",value.data.path);
+      setimagePath(value.data.path);
+
+      Getimageurl(value.data.path).then((value)=>{
+        console.log(value);
+        
+        supabase.from('properties')
+        .insert({
+          Owner_uuid: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
+          Purpose: purpose,
+          PropertyType: properyTypeF,
+          City: City,
+          Address: address,
+          lat: lat,
+          lng: lng,
+          AreaUnits: areaUnits,
+          OcupancyStatus: Ocupancy,
+          Price: price,
+          PropertyTitle: propertyTitle,
+          Description: description,
+          ImagePath: value,
+          Status: 'Pending',
+  
+        })
+        .then(value=>console.log("data saved :",value))
+        .catch(error=>console.log(error));
+      })
+
+      //if value.status error condition!
+
+     })
+     .catch(error=>console.log(error));
+
+
+    }
+
+
+  const handlePurpose = (e) => {
+    setPurpose(e.target.value);
+  };
+  const handleproperyTypeF = (e) => {
+    setPropertyTypeF(e.target.value);
+  };
+  const handleCity = (e) => {
+    setCity(e.target.value);
+  };
+  const handlePrice = (e) => {
+    if (e.target.value > 999999999) {
       setPriceWords("Price is too big!");
     }
     setPrice(e.target.value);
-    setPriceWords(numWords(e.target.value))}
-  const handleAreaUnits = (e) => {setareaUnits(e.target.value)}
-  const handleUnits = (e) => {setUnits(e.target.value)}
-  const handlesetOcupancy = (e) => {setOcupancy(e.target.value)}  
-  const handlesetPropertyTitle = (e) => {setPropertyTitle(e.target.value)}  
-  const handlesetDescription = (e) => {setDescription(e.target.value)}   
-  
+    setPriceWords(toWords.convert(e.target.value, { currency: true }));
+  };
+  const handleAreaUnits = (e) => {
+    setareaUnits(e.target.value);
+  };
+  const handleUnits = (e) => {
+    setUnits(e.target.value);
+  };
+  const handlesetOcupancy = (e) => {
+    setOcupancy(e.target.value);
+  };
+  const handlesetPropertyTitle = (e) => {
+    setPropertyTitle(e.target.value);
+  };
+  const handlesetDescription = (e) => {
+    setDescription(e.target.value);
+  };
+
   const handleChange = (address) => {
     setaddress(address);
+    //for udating your writing in input box.
   };
 
   const handleSelect = (address) => {
@@ -73,9 +180,12 @@ function AddListing() {
     console.log(address);
     geocodeByAddress(address)
       .then((results) => {
-        getLatLng(results[0]);
-        setFormatAddress(results[0]); //needed result
-        console.log(results[0]);
+        getLatLng(results[0]).then((value) => {
+          setLng(value.lng);
+          setLat(value.lat);
+        });
+        setFormatAddress(results[0]);
+        //console.log(lat,lng);
       })
       .then((latLng) => console.log("Success", latLng))
       .catch((error) => console.error("Error", error));
@@ -126,7 +236,7 @@ function AddListing() {
     <div className="col-span-12 px-4 py-14 sm:px-6 lg:px-8">
       <div className="">
         <h1 className="text-center text-2xl font-bold text-indigo-600 sm:text-3xl">
-          Let's Add A New Listing!
+          Lets Add A New Listing!
         </h1>
 
         <p className="mx-auto mt-4 max-w-md text-center text-gray-500">
@@ -138,7 +248,7 @@ function AddListing() {
         </p>
 
         <form
-          action=""
+          onSubmit={handleSubmit}
           className="mt-6  mb-0 space-y-4 rounded-lg p-8 shadow-2xl"
         >
           <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
@@ -162,8 +272,8 @@ function AddListing() {
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 onChange={handlePurpose}
                 required
-
               />
+
               <label
                 for="bordered-radio-1"
                 className="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -180,7 +290,6 @@ function AddListing() {
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 onChange={handlePurpose}
                 required
-
               />
               <label
                 for="bordered-radio-2"
@@ -194,7 +303,7 @@ function AddListing() {
           <div>
             <label
               for="PropertyType"
-              className="text-md font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-double"
             >
               Property Type
             </label>
@@ -208,7 +317,6 @@ function AddListing() {
                 name="bordered-radio-2"
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 required
-
               />
               <label
                 for="bordered-radio-11"
@@ -226,7 +334,6 @@ function AddListing() {
                 name="bordered-radio-2"
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 required
-
               />
               <label
                 for="bordered-radio-22"
@@ -245,7 +352,6 @@ function AddListing() {
                 name="bordered-radio-2"
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 required
-
               />
               <label
                 for="bordered-radio-33"
@@ -271,7 +377,7 @@ function AddListing() {
           <div>
             <label
               for="city"
-              className="text-md font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-double"
             >
               City
             </label>
@@ -539,11 +645,12 @@ function AddListing() {
           <div>
             <label
               for="email"
-              className="text-md font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-double"
             >
               Location
             </label>
             <PlacesAutocomplete
+              searchOptions={searchOptions}
               value={address}
               onChange={handleChange}
               onSelect={handleSelect}
@@ -558,7 +665,8 @@ function AddListing() {
                   <input
                     {...getInputProps({
                       placeholder: "Enter Property Location ...",
-                      className:"location-search-input mt-2 w-full rounded-lg border-gray-700 p-4 pr-12 text-sm shadow-sm",
+                      className:
+                        "location-search-input mt-2 w-full rounded-lg border-gray-700 p-4 pr-12 text-sm shadow-sm",
                     })}
                   />
                   <div className="autocomplete-dropdown-container bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -589,25 +697,25 @@ function AddListing() {
           </div>
 
           <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
-          Property Specs And Price
+            Property Specs And Price
           </p>
 
-           <div>
-           <label
+          <div>
+            <label
               for="AreaUnits"
-              className="pr-10 text-md font-medium underline decoration-red-700 decoration-double">
+              className="pr-10 text-sm font-medium underline decoration-red-700 decoration-double"
+            >
               Area Units
             </label>
             <input
-                  type="number"
-                  name="AreaUnits"
-                  placeholder="Area Units"
-                  required
-                  className="rounded-lg border-gray-700 p-4 text-sm shadow-sm"
-                  value={areaUnits}
-                  onChange={handleAreaUnits}
-
-                />
+              type="number"
+              name="AreaUnits"
+              placeholder="Area Units"
+              required
+              className="rounded-lg border-gray-700 p-4 text-sm shadow-sm"
+              value={areaUnits}
+              onChange={handleAreaUnits}
+            />
 
             <select
               id="AreaUnits"
@@ -622,16 +730,16 @@ function AddListing() {
               <option value="Marla">Marla</option>
               <option value="Kanal">Kanal</option>
             </select>
+          </div>
 
-            </div>
-
-            <div>
-           <label
+          <div>
+            <label
               for="AreaUnits"
-              className="pr-10 text-md font-medium underline decoration-red-700 decoration-double">
+              className="pr-10 text-sm font-medium underline decoration-red-700 decoration-double"
+            >
               Occupancy Status
             </label>
-            
+
             <select
               id="OcupancyStatus"
               className="pr-12  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 inline p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -642,71 +750,78 @@ function AddListing() {
               <option value="Vacant">Vacant</option>
               <option value="Occupied">Occupied</option>
             </select>
-
-            </div>
-
+          </div>
 
           <div>
-           <label
+            <label
               for="price"
-              className="block pr-10 text-md font-medium underline decoration-red-700 decoration-double">
+              className="block pr-10 text-md font-medium underline decoration-red-700 decoration-double"
+            >
               Price (PKR)
             </label>
             <input
-                  type="number"
-                  name="price"
-                  placeholder="Price"
-                  value={price}
-                  onChange={handlePrice}
-                  required
-                  className="mt-2 w-half rounded-lg border-gray-700 p-4 text-sm shadow-sm"
-                  max='999999999'
+              type="number"
+              name="price"
+              placeholder="Price"
+              value={price}
+              onChange={handlePrice}
+              required
+              className="mt-2 w-half rounded-lg border-gray-700 p-4 text-sm shadow-sm"
+              max="999999999"
+            />
+            <input
+              type="number"
+              name="value"
+              disabled
+              placeholder={priceWords}
+              className="capitalize mx-10 w-[700px] h-4 border-gray-400 p-4 text-md shadow-sm"
+            />
+          </div>
 
-                />
-                <input
-                  type="number"
-                  name="value"
-                  disabled
-                  placeholder={priceWords}
-                  className="capitalize mx-10 w-[700px] h-4 border-gray-400 p-4 text-md shadow-sm"
-                />
-            </div>
+          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
+            Property Title And Description
+          </p>
 
-            <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
-              Property Title And Description
-            </p>
-
-            <div>
-           <label
+          <div>
+            <label
               for="title"
-              className="pr-10 text-md font-medium underline decoration-red-700 decoration-double">
+              className="pr-10 text-sm font-medium underline decoration-red-700 decoration-double"
+            >
               Property Title
             </label>
             <input
-                  type="text"
-                  name="title"
-                  placeholder="Property Title"
-                  required
-                  value={propertyTitle}
-                  onChange={handlesetPropertyTitle}
-                  className="mt-2 block w-full rounded-lg border-gray-700 p-4 text-sm shadow-sm"
-                />
-              </div>
+              type="text"
+              name="title"
+              placeholder="Property Title"
+              required
+              value={propertyTitle}
+              onChange={handlesetPropertyTitle}
+              className="mt-2 block w-full rounded-lg border-gray-700 p-4 text-sm shadow-sm"
+            />
+          </div>
 
-
-              <div>
-           <label
+          <div>
+            <label
               for="title"
-              className="pr-10 text-md font-medium underline decoration-red-700 decoration-double">
+              className="pr-10 text-sm font-medium underline decoration-red-700 decoration-double"
+            >
               Description
             </label>
-            <textarea value={description} onChange={handlesetDescription} id="message" rows="4"  class="mt-2 block p-2.5 w-[700px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-700 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Property Description..." required></textarea>
-              </div>
+            <textarea
+              value={description}
+              onChange={handlesetDescription}
+              id="message"
+              rows="4"
+              class="mt-2 block p-2.5 w-[700px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-700 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Property Description..."
+              required
+            ></textarea>
+          </div>
 
-
-
-
-
+          
+    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 underline decoration-red-700 decoration-double" for="file_input">Upload Property Photo</label>
+    <input onChange={(e)=>{setImage(e.target.files[0]);console.log(e.target.files[0])}} className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" accept=' .png, .jpeg, .jpg' required/>
+      {/* <div onClick={sendImage}>SEND IMAGE</div> */}
 
           <button
             type="submit"

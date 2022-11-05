@@ -7,6 +7,7 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import UserDashboard from './components/UserDashboard'
 import Sidebar from './components/Sidebar';
+import SingleListing from './components/SingleListing'
 
 
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
       <Route path="/SignedHome/*" element={<Sidebar/>}></Route>
+      <Route path="/SingleListing/*" element={<SingleListing/>}></Route>
     </Routes>
     </BrowserRouter>
   );

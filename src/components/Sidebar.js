@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import UserDashboard from './UserDashboard'
 import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
 import AddListing from './AddListing';
+import ViewListing from './ViewListing'
 
 function Sidebar() {
 
@@ -34,7 +35,7 @@ function Sidebar() {
                      <Link to='./AddListing' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Add Listing</Link>
                   </li>
                   <li>
-                     <a href="\home" className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Listing's</a>
+                  <Link to='./ViewListing' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Listing's</Link>
                   </li>
                   <li>
                      <a href="\home" className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Edit Listing's</a>
@@ -90,6 +91,7 @@ function Sidebar() {
     <Routes>
     <Route path="/UserDashboard" element={<UserDashboard/>}></Route>
     <Route path="/AddListing" element={<AddListing/>}></Route>
+    <Route path="/ViewListing" element={<ViewListing/>}></Route>
     </Routes>
  </div>
   )
