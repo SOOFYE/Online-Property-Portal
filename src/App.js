@@ -21,8 +21,8 @@ function App() {
     <Routes>
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
-      <Route path="/SignedHome/*" element={<Sidebar/>}></Route>
-      <Route path="/SingleListing/*" element={<SingleListing/>}></Route>
+      <Route path="/MemberPortal/*" element={<Sidebar/>}></Route>
+      <Route path="/SingleListing/:propertyid" element={<SingleListing/>}></Route>
     </Routes>
     </BrowserRouter>
   );

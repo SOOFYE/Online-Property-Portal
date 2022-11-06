@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import { Link, useParams, } from "react-router-dom";
+import PhonePopup from "./PhonePopup";
+import PendingError from "./PendingError";
 
 function SingleListing() {
-  const propertyid = "e5e35203-ba6a-406b-aa95-4b45eb98c0a8";
+  //const propertyid = "e5e35203-ba6a-406b-aa95-4b45eb98c0a8"; //send trhoguh url
+
+  const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0" //we will have this when user logges in
 
   const [listing, setListing] = useState([]);
 
+  const [fname,setfname] = useState("");
+  const [lname,setlname] = useState("");
+  const [email,setEmail] = useState("");
+  const [fulllname,setfullname] = useState("");
+  const [showPopup,setpopup] = useState(false);
+
+  let {propertyid} = useParams();
+
   useEffect(() => {
     //if lisiting blocked, or pending, or rejected, then redirect user to error page
+
     supabase
       .rpc("getsinglelisting", {
         propertyid,
@@ -16,10 +30,28 @@ function SingleListing() {
         setListing(value.data);
         console.log(value);
       });
+
+      supabase.rpc('getloggedinuser', {
+        currentuser
+      }).then(value=>{
+        console.log(value);
+        setfname(value.data[0].userfname);
+        setlname(value.data[0].userlname);
+        setEmail(value.data[0].useremail);
+        let fullname = fname.concat(" ",lname)
+        setfullname(fullname);
+      })
+
+
+
   }, []);
 
-  return listing[0] !== undefined ? (
+  return((listing[0] !== undefined && listing[0].propertystatus==='Active')||(listing[0] !== undefined && currentuser===listing[0].ownerid ))?(
+
+    
+    
     <section>
+    <PhonePopup showpopup={showPopup} setpopup={setpopup} phonenum={listing[0].ownersphone}/>
       <div class="relative mx-auto max-w-screen-xl px-4 py-8">
         <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
           <div class="grid grid-cols-2 gap-4 md:grid-cols-1">
@@ -78,8 +110,8 @@ function SingleListing() {
                 {listing[0].ocupstatus}
               </p>
 
-              <article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
-                <span class="inline-block rounded bg-gray-600 p-2 text-white">
+              {(currentuser!==listing[0].ownerid)?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
+              <span class="inline-block rounded bg-gray-600 p-2 text-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -119,7 +151,9 @@ function SingleListing() {
                       type="email"
                       id="UserEmail"
                       placeholder="anthony@rhcp.com"
-                      class="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                      value={email}
+                      className=" mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+
                     />
                   </label>
                   </div>
@@ -137,6 +171,7 @@ function SingleListing() {
                     <input
                       type="text"
                       id="UserEmail"
+                      value = {fulllname}
                       placeholder="Anthony Raymens"
                       className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                     />
@@ -150,24 +185,27 @@ function SingleListing() {
                   >
                     <span class="text-xs font-medium text-gray-700">
                       {" "}
-                      Full Name{" "}
+                      Message{" "}
                     </span>
 
-                    <input
-                      type="number"
-                      id="UserEmail"
-                      placeholder="Anthony Raymens"
-                      className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                    />
+                    <textarea
+             
+              id="message"
+              rows="4"
+              class="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+              placeholder="Write your message to this property's owner"
+              required
+            ></textarea>
+
                     </label>
                     </div>
 
                     <div className='grid grid-cols-3 justify-items-stretch' >
                     <div></div>
                     
-                                            <a
+                                            <button type="button"
                         className="col-span-1 justify-self-end group relative inline-flex items-center overflow-hidden rounded bg-indigo-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500"
-                        href="/download"
+                        onClick={()=>setpopup(true)}
                         >
                         <span
                             class="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-4"
@@ -182,11 +220,11 @@ function SingleListing() {
                         <span className="text-sm font-medium transition-all group-hover:mr-4">
                             Call
                         </span>
-                        </a>
+                        </button>
                         
-                        <a
+                        <button
                         className=" col-span-1 mx-5 justify-self-start group relative inline-flex items-center overflow-hidden rounded border border-current px-8 py-3 text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-                        href="/download"
+                        
                         >
                         <span
                             class="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-4"
@@ -200,7 +238,7 @@ function SingleListing() {
                         <span class="text-sm font-medium transition-all group-hover:mr-4">
                             Message
                         </span>
-                        </a>
+                        </button>
                     </div>
 
 
@@ -228,15 +266,26 @@ function SingleListing() {
                     &rarr;
                   </span>
                 </a>
-              </article>
+              </article>):(<div className="my-12">
+              <Link to='/MemberPortal/ViewListing'
+  className="flex items-center justify-center rounded-xl border-4 border-black bg-green-100 px-8 py-4 font-bold shadow-[6px_6px_0_0_#000] transition hover:shadow-none focus:outline-none focus:ring active:bg-pink-50"
+  
+>
+  View my other listings <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+</svg>
+
+</Link></div>)}
             </div>
           </div>
         </div>
       </div>
+      
     </section>
-  ) : (
-    <div>No shit yet</div>
-  );
+  
+  ) : (listing[0]!==undefined && listing[0].propertystatus==="Pending")?(
+    <PendingError/>
+  ):(<div>Loading</div>)
 }
 
 export default SingleListing;

@@ -8,6 +8,8 @@ import { ToWords } from "to-words";
 
 import { supabase } from '../supabaseClient'
 
+import { Navigate, useNavigate } from "react-router-dom";
+
 const toWords = new ToWords({
   localeCode: "en-IN",
   converterOptions: {
@@ -34,6 +36,8 @@ const searchOptions = {
 };
 
 function AddListing() {
+
+  const navigate = useNavigate();
 
   const Homes = [
     "House",
@@ -125,7 +129,11 @@ function AddListing() {
           Status: 'Pending',
   
         })
-        .then(value=>console.log("data saved :",value))
+        .then(value=>{
+          console.log("data saved :",value);
+          navigate("/MemberPortal/ViewListing")
+
+          })
         .catch(error=>console.log(error));
       })
 

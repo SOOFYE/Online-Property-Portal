@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
+import { Link } from 'react-router-dom';
 
 const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
 
@@ -28,7 +29,7 @@ function ViewListing() {
     <section className="grid grid-cols-3 row-span-5 col-span-10 my-16 gap-5 mx-12 overflow-y-auto">
     {listings.map((value,index)=>{
         return(
-            <div className="group block overflow-hidden mb-4" key={index}>
+            <Link to={"/SingleListing/"+value.propertyid}><div className="group block overflow-hidden mb-4" key={index}>
 
                 <div className="overflow-hidden rounded-3xl">
                     <img
@@ -52,7 +53,7 @@ function ViewListing() {
                         </p>
                     </div>    
                 </div>
-            </div>
+            </div></Link>
         )
     })} 
     
