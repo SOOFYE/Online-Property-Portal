@@ -4,7 +4,18 @@ import { Link, useParams, } from "react-router-dom";
 import PhonePopup from "./PhonePopup";
 import PendingError from "./PendingError";
 
+import GoogleMapReact from 'google-map-react';
+
+const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
+<path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+</svg>
+</div>;
+
 function SingleListing() {
+
+  
+
   //const propertyid = "e5e35203-ba6a-406b-aa95-4b45eb98c0a8"; //send trhoguh url
 
   const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0" //we will have this when user logges in
@@ -16,6 +27,11 @@ function SingleListing() {
   const [email,setEmail] = useState("");
   const [fulllname,setfullname] = useState("");
   const [showPopup,setpopup] = useState(false);
+  const [location,setLocation] = useState("");
+  const [defaultProps,setProps] = useState({center:{
+    lat: 0,
+    lng: 0
+  }})
 
   let {propertyid} = useParams();
 
@@ -28,6 +44,17 @@ function SingleListing() {
       })
       .then((value) => {
         setListing(value.data);
+        let location = value.data[0].sublocaly1.concat(" ",value.data[0].sublocaly2.concat(" ",value.data[0].neighbourhoodd))
+        setLocation(location);
+        const defaultProps = {
+          center: {
+            lat: value.data[0].lati,
+            lng: value.data[0].lngi
+          },
+          zoom: 15
+        };
+        console.log(defaultProps)
+        setProps(defaultProps)
         console.log(value);
       });
 
@@ -73,7 +100,7 @@ function SingleListing() {
 
                 <p className="mt-0.5 text-sm font-light">
                   {listing[0].propertycity},
-                  <p className="">{listing[0].propertyaddress}</p>
+                  <p className="">{location}</p>
                 </p>
 
                 <hr className="mt-4"></hr>
@@ -128,11 +155,11 @@ function SingleListing() {
                   </svg>
                 </span>
 
-                <a href="#">
+                <div>
                   <h3 class="mt-0.5 mb-3 text-lg font-medium text-gray-900">
                     Interested? Get in touch with us.
                   </h3>
-                </a>
+                </div>
 
                 <form>
 
@@ -246,29 +273,11 @@ function SingleListing() {
                 </form>
 
                 <p class="mt-2 text-sm leading-relaxed text-gray-500 line-clamp-3">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Recusandae dolores, possimus pariatur animi temporibus
-                  nesciunt praesentium dolore sed nulla ipsum eveniet corporis
-                  quidem, mollitia itaque minus soluta, voluptates neque
-                  explicabo tempora nisi culpa eius atque dignissimos. Molestias
-                  explicabo corporis voluptatem?
+                 Please avoid any spam emails. The Owner of this property will shortly be in touch with you. Until then browse more!
                 </p>
-
-                <a
-                  href="#"
-                  class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600"
-                >
-                  Find out more
-                  <span
-                    aria-hidden="true"
-                    class="block transition group-hover:translate-x-0.5"
-                  >
-                    &rarr;
-                  </span>
-                </a>
               </article>):(<div className="my-12">
               <Link to='/MemberPortal/ViewListing'
-  className="flex items-center justify-center rounded-xl border-4 border-black bg-green-100 px-8 py-4 font-bold shadow-[6px_6px_0_0_#000] transition hover:shadow-none focus:outline-none focus:ring active:bg-pink-50"
+  className="flex items-center justify-center rounded-xl border-4 border-black bg-gray-200 px-8 py-4 font-bold shadow-[6px_6px_0_0_#000] transition hover:shadow-none focus:outline-none focus:ring active:bg-pink-50"
   
 >
   View my other listings <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -280,12 +289,42 @@ function SingleListing() {
           </div>
         </div>
       </div>
+
+      <section class="bg-gray-800 text-white">
+  <div class="max-w-screen-xl px-4 py-3 sm:px-6 lg:px-8">
+    <div class="max-w-xl">
+      <h2 class="text-3xl font-bold sm:text-4xl">Address</h2>
+
+      <p class="mt-2 mb-2 text-gray-300 text-lg">
+        {listing[0].propertyaddress}
+      </p>
+    </div>
+
+    
+       <div style={{ height: '60vh', width: '100%' }}>
+      <GoogleMapReact
+        bootstrapURLKeys={{ key: "AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc" }}
+        defaultCenter={defaultProps.center}
+        defaultZoom={defaultProps.zoom}
+      >
+
+<AnyReactComponent
+          lat={defaultProps.center.lat}
+          lng={defaultProps.center.lng}
+          text="My Marker"
+        />
+       
+      </GoogleMapReact>
+    </div>
+    </div>
+ 
+</section>
       
     </section>
   
   ) : (listing[0]!==undefined && listing[0].propertystatus==="Pending")?(
     <PendingError/>
-  ):(<div>Loading</div>)
+  ):(<div className="text-3xl">Loading....</div>)
 }
 
 export default SingleListing;

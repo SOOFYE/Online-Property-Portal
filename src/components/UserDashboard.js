@@ -9,23 +9,51 @@ function UserDashboard() {
     const [ActiveCount,setActiveCount] = useState();
     const [recentListings,setListings] = useState([]);
 
+    const getpendingstatuscount = async()=>{
+      const {data,error} = await supabase.rpc('GetStatusCount', {
+        ownerid, 
+        statusvalue:"Pending"
+      })
+      setpendingCount(data)
+    }
+
+    const getactivestatuscount = async()=>{
+      const {data,error} = await supabase.rpc('GetStatusCount', {
+        ownerid, 
+        statusvalue:"Active"
+      })
+      setActiveCount(data)
+    }
+
+    const getrecentlisting = async()=>{
+      const {data,error} = await supabase.rpc('getrecentlistings', {
+        ownerid
+      })
+      console.log(data);
+      setListings(data)
+
+
+    }
+
   useEffect(()=>{
 
-    
+      getpendingstatuscount();
+      getactivestatuscount();
+      getrecentlisting();
 
-    supabase.rpc('GetStatusCount', {
-    ownerid, 
-    statusvalue:"Pending"
-  }).then((value)=>setpendingCount(value.data));
+  //   supabase.rpc('GetStatusCount', {
+  //   ownerid, 
+  //   statusvalue:"Pending"
+  // }).then((value)=>setpendingCount(value.data));
 
-  supabase.rpc('GetStatusCount', {
-    ownerid, 
-    statusvalue:"Active"
-  }).then((value)=>setActiveCount(value.data));
+  // supabase.rpc('GetStatusCount', {
+  //   ownerid, 
+  //   statusvalue:"Active"
+  // }).then((value)=>setActiveCount(value.data));
 
-  supabase.rpc('getrecentlistings', {
-    ownerid
-  }).then(value=>{console.log(value.data);setListings(value.data)});
+  // supabase.rpc('getrecentlistings', {
+  //   ownerid
+  // }).then(value=>{console.log(value.data);setListings(value.data)});
 
   },[])
 
@@ -35,7 +63,7 @@ function UserDashboard() {
     <section className="bg-white row-span-3 col-span-7">
     <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h2 className="text-3xl font-bold text-indigo-600 sm:text-4xl">
           Your Property Stats
         </h2>
   
@@ -53,7 +81,7 @@ function UserDashboard() {
               Total Views
             </dt>
   
-            <dd className="text-4xl font-extrabold text-blue-600 md:text-5xl">
+            <dd className="text-4xl font-extrabold text-gray-800 md:text-5xl">
               0
             </dd>
           </div>
@@ -65,7 +93,7 @@ function UserDashboard() {
              Active Listings
             </dt>
   
-            <dd className="text-4xl font-extrabold text-blue-600 md:text-5xl">{ActiveCount}</dd>
+            <dd className="text-4xl font-extrabold text-gray-800 md:text-5xl">{ActiveCount}</dd>
           </div>
   
           <div
@@ -75,7 +103,7 @@ function UserDashboard() {
               Pending Listings
             </dt>
   
-            <dd className="text-4xl font-extrabold text-blue-600 md:text-5xl">{pendingCount}</dd>
+            <dd className="text-4xl font-extrabold text-gray-800 md:text-5xl">{pendingCount}</dd>
           </div>
         </dl>
       </div>
@@ -85,7 +113,7 @@ function UserDashboard() {
     <section className="bg-white row-span-4 col-span-7">
     <div className="mx-auto max-w-screen-xl px-4 py-10 sm:px-5 md:py-13 lg:px-8">
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl mb-4">
+        <h2 className="text-3xl font-bold text-indigo-600 sm:text-4xl mb-4">
           Your Recent Listings
         </h2>
 

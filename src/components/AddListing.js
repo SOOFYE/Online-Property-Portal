@@ -71,12 +71,16 @@ function AddListing() {
   const [properyTypeF, setPropertyTypeF] = useState(String);
   const [City, setCity] = useState(String);
   const [address, setaddress] = useState(""); //actual address we willl use
-  const [formatedAddress, setFormatAddress] = useState(""); //result stored if needed
+  const [landMark,setlandMark] = useState("N/A");
+  const [neighbourhood,setneighbourhood] = useState(" ");
+  const [sublocality_level_1,setsublocality_level_1] = useState(" ");
+  const [sublocality_level_2,setsublocality_level_2] = useState(" ");
+  const [formatedAddress, setFormatAddress] = useState(" "); //result stored if needed
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
   const [areaUnits, setareaUnits] = useState("");
   const [units, setUnits] = useState("");
-  const [Ocupancy, setOcupancy] = useState("");
+  const [Ocupancy, setOcupancy] = useState("Vacant");
   const [price, setPrice] = useState("");
   const [priceWords, setPriceWords] = useState("");
   const [propertyTitle, setPropertyTitle] = useState("");
@@ -127,6 +131,10 @@ function AddListing() {
           Description: description,
           ImagePath: value,
           Status: 'Pending',
+          neighbourhood: neighbourhood,
+          sublocal1: sublocality_level_1,
+          sublocal2: sublocality_level_2,
+          landmark: landMark
   
         })
         .then(value=>{
@@ -188,6 +196,31 @@ function AddListing() {
     console.log(address);
     geocodeByAddress(address)
       .then((results) => {
+        results[0].address_components.map((value)=>{
+          console.log(value)
+          value.types.map((typeval)=>{
+            if(typeval==='neighbourhood'){
+              return setneighbourhood(value.long_name);
+            }
+            if(typeval==='sublocality_level_1'){
+              return setsublocality_level_1(value.long_name);
+            }
+            if(typeval==='setsublocality_level_2'){
+              return sublocality_level_2(value.long_name);
+            }
+            if(typeval==='locality'){
+              return setCity(value.long_name);
+            }
+            if(typeval==='landmark'){
+              return setlandMark(value.long_name);
+            }
+            return;
+          })
+          return;
+        })
+
+        
+
         getLatLng(results[0]).then((value) => {
           setLng(value.lng);
           setLat(value.lat);
@@ -204,6 +237,7 @@ function AddListing() {
     console.log(propertyType);
 
     if (propertyType === "Homes") {
+      setPropertyTypeF(Homes[0])
       let dd = Homes.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -216,6 +250,7 @@ function AddListing() {
     }
 
     if (propertyType === "Plot") {
+      setPropertyTypeF(Plots[0])
       let ddd = Plots.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -228,6 +263,7 @@ function AddListing() {
     }
 
     if (propertyType === "Commercial") {
+      setPropertyTypeF(Commercial[0])
       let dddd = Commercial.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -259,7 +295,7 @@ function AddListing() {
           onSubmit={handleSubmit}
           className="mt-6  mb-0 space-y-4 rounded-lg p-8 shadow-2xl"
         >
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
             Purpose, Property Type And Location
           </p>
 
@@ -382,7 +418,7 @@ function AddListing() {
             </select>
           </div>
 
-          <div>
+          {/* <div>
             <label
               for="city"
               className="text-sm font-medium underline decoration-red-700 decoration-double"
@@ -649,7 +685,8 @@ function AddListing() {
               <option value="Zhob">Zhob</option>
               <option value="Ziarat">Ziarat</option>
             </select>
-          </div>
+          </div> */}
+
           <div>
             <label
               for="email"
@@ -704,7 +741,7 @@ function AddListing() {
             </PlacesAutocomplete>
           </div>
 
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
             Property Specs And Price
           </p>
 
@@ -786,7 +823,7 @@ function AddListing() {
             />
           </div>
 
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-green-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
             Property Title And Description
           </p>
 
