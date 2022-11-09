@@ -233,7 +233,7 @@ function SearchForm({popup,setpopup,option}) {
 
   return (popup)? (
     <div>
-    <div class="absolute bg-black z-10 bg-opacity-99 mx-auto mx-[4rem] w-screen h-max max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="absolute bg-black z-10 bg-opacity-90 mx-auto mx-[4rem] w-screen h-max max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
     <button onClick={()=>setpopup(false)}>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

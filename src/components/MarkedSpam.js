@@ -1,33 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, {useState,useEffect} from 'react'
 import { Link } from "react-router-dom";
 import { supabase } from '../supabaseClient'
 
-function PendingProperties({setoption1}) {
-
+function MarkedSpam({setoption3}) {
     const [tablerows,setTableRows] = useState([]);
 
-    const getpendingprop = async()=>{
+    const getspamProp = async()=>{
 
-        let { data, error } = await supabase.rpc('getpendingproperties');
+        let { data, error } = await supabase.rpc('getspamproperties')
+
+        console.log(data,error);
 
         setTableRows(data);
 
     }
 
-    const updateStatus = async (pid,stat) =>{
-        let { data, error } = await supabase.rpc('updatestatus', {
-            propertyid:pid, 
-            stat:stat
+    const updateSpamStatus = async (pid) =>{
+
+        let { data, error } = await supabase.rpc('updatemarkedspamstatus', {
+            propertyid:pid
         })
 
-        getpendingprop();
+        console.log(data);
+
+        getspamProp();
     }
 
     useEffect(()=>{
 
-        setoption1(true);
+        setoption3(true);
 
-        getpendingprop();
+        getspamProp();
 
     },[])
 
@@ -65,7 +68,7 @@ function PendingProperties({setoption1}) {
                 Row {index}
               </label>
 
-              <button type="button" onClick={()=>updateStatus(value.propertyid,"Active")}
+              <button type="button" onClick={()=>updateSpamStatus(value.propertyid)}
                 class="group inline-block rounded-full border border-green-600 p-1 text-green-600 hover:bg-green-600 hover:text-white focus:outline-none hover:stroke-black focus:ring active:bg-indigo-500"
                 
               >
@@ -87,27 +90,6 @@ function PendingProperties({setoption1}) {
                 </svg>
               </button>
               
-              <button type="button"  onClick={()=>updateStatus(value.propertyid,"Reject")}
-                class="group inline-block rounded-full border border-red-600 ml-3 p-1 text-red-600 hover:bg-red-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
-                
-              >
-                <span class="sr-only"> Reject </span>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="red"
-                  class="w-3 h-3 group-hover:stroke-black"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </td>
             <td class="group hover:text-indigo-800 whitespace-nowrap px-4 py-2 font-medium text-gray-900">
             <Link to={"/SingleListing/"+value.propertyid}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="group-hover:stroke-blue inline w-3 h-3 mx-1">
@@ -129,7 +111,7 @@ function PendingProperties({setoption1}) {
         </tbody>
       </table>
     </div>
-  ):(tablerows.length===0 && tablerows!==undefined)?(<div>All properties are Active at the moment.</div>):(<div>Error Retriving Properties!</div>);
+  ):(tablerows.length===0 && tablerows!==undefined)?(<div>None marked as spam </div>):(<div>ErrorRetriving Data</div>);
 }
 
-export default PendingProperties;
+export default MarkedSpam

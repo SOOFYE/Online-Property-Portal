@@ -6,7 +6,7 @@ import PendingError from "./PendingError";
 
 import GoogleMapReact from 'google-map-react';
 import SpamForm from "./SpamForm";
-import SuccessSpamSent from "./SuccessSpamSent";
+
 
 const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />

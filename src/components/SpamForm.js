@@ -32,6 +32,7 @@ function SpamForm({showspam,setshowspam,pid}) {
             }, 1500)
         }
         console.log(value);
+        setreason("");
     })
 
 

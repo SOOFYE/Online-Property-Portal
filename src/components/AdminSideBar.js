@@ -2,23 +2,33 @@ import React, { useEffect, useState } from "react";
 import PendingProperties from "./PendingProperties";
 import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
 import SpamReports from "./SpamReports";
+import MarkedSpam from "./MarkedSpam";
 function AdminSideBar() {
 
     const currentuser = '47a6cf34-4c31-4209-8c7a-b58f554a9039' //admin id
     
     const [option1,setoption1] = useState(false);
     const [option2,setoption2] = useState(false);
+    const [option3,setoption3] = useState(false);
 
     const handleSelection1 = ()=>{
         setoption1(true);
         setoption2(false);
+        setoption3(false);
     }
 
     const handleSelection2 = ()=>{
 
         setoption2(true);
         setoption1(false);
+        setoption3(false);
 
+    }
+
+    const handleSelection3 = ()=>{
+        setoption3(true);
+        setoption2(false);
+        setoption1(false);
     }
 
     useEffect(()=>{
@@ -47,7 +57,7 @@ function AdminSideBar() {
       </li>
 
       <li class="flex-1">
-        <Link to="./spamproperties" onClick={handleSelection2} class="relative block p-4" href="">
+        <Link to="./SpamReports" onClick={handleSelection2} class="relative block p-4" href="">
         {(option2)?(<span className="absolute inset-x-0 -bottom-px h-px w-full bg-pink-600"></span>):(<span></span>)}
           <div class="flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -62,12 +72,29 @@ function AdminSideBar() {
           </div>
         </Link>
       </li>
-    </ul>
+      <li class="flex-1">
+        <Link to="./MarkedSpam" onClick={handleSelection3} class="relative block p-4" href="">
+        {(option3)?(<span className="absolute inset-x-0 -bottom-px h-px w-full bg-pink-600"></span>):(<span></span>)}
+          <div class="flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+</svg>
 
-    <SpamReports/>
+
+
+            <span class="ml-3 text-sm font-medium text-gray-900">
+              {" "}
+              Marked Spam{" "}
+            </span>
+          </div>
+        </Link>
+      </li>      
+    </ul>
 
     <Routes>
     <Route path="/PendingProperties" element={<PendingProperties setoption1={setoption1}/>}></Route>
+    <Route path="/SpamReports" element={<SpamReports setoption2={setoption2}/>}></Route>
+    <Route path="/MarkedSpam" element={<MarkedSpam setoption3={setoption3}/>}></Route>
     </Routes>
 </div>
     
