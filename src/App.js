@@ -9,6 +9,7 @@ import UserDashboard from './components/UserDashboard'
 import Sidebar from './components/Sidebar';
 import SingleListing from './components/SingleListing'
 import HomePage from './components/HomePage';
+import AdminSideBar from './components/AdminSideBar';
 
 
 
@@ -25,6 +26,7 @@ function App() {
       <Route path="/MemberPortal/*" element={<Sidebar/>}></Route>
       <Route path="/SingleListing/:propertyid" element={<SingleListing/>}></Route>
       <Route path="/HomePage" element={<HomePage/>}></Route>
+      <Route path="/AdminPortal/*" element={<AdminSideBar/>}></Route>
     </Routes>
     </BrowserRouter>
   );

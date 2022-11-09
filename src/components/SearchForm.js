@@ -240,7 +240,7 @@ function SearchForm({popup,setpopup,option}) {
 </svg></button>
       <div class="mx-auto max-w-lg text-center">
         <h1 class="text-2xl text-white font-bold sm:text-3xl">
-          Lets find properties to {option}
+          Lets Find Properties To {option}
         </h1>
 
         <p class="mt-4 text-white">Fill out the form to get filtered results</p>

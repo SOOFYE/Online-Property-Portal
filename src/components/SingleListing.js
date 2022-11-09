@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Link, useParams, } from "react-router-dom";
+import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import PhonePopup from "./PhonePopup";
 import PendingError from "./PendingError";
 
 import GoogleMapReact from 'google-map-react';
+import SpamForm from "./SpamForm";
+import SuccessSpamSent from "./SuccessSpamSent";
 
 const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -14,12 +16,14 @@ const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/
 
 function SingleListing() {
 
+  const navigate = useNavigate();
+
   
 
   //const propertyid = "e5e35203-ba6a-406b-aa95-4b45eb98c0a8"; //send trhoguh url
 
   const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0" //we will have this when user logges in
-
+  //const currentuser = "47a6cf34-4c31-4209-8c7a-b58f554a9039" //adimin id
   const [listing, setListing] = useState([]);
 
   const [fname,setfname] = useState("");
@@ -33,7 +37,26 @@ function SingleListing() {
     lng: 0
   }})
 
+  const [showSpamForm,setshowSpamForm] = useState(false)
+
   let {propertyid} = useParams();
+
+
+  const updateStatus = async (pid,stat) =>{
+    let { data, error } = await supabase.rpc('updatestatus', {
+        propertyid:pid, 
+        stat:stat
+    })
+
+    navigate("/AdminPortal/")
+
+}
+
+const markSpam = async(pid)=>{
+
+}
+
+
 
   useEffect(() => {
     //if lisiting blocked, or pending, or rejected, then redirect user to error page
@@ -69,16 +92,20 @@ function SingleListing() {
         setfullname(fullname);
       })
 
+      //alert();
+
 
 
   }, []);
 
-  return((listing[0] !== undefined && listing[0].propertystatus==='Active')||(listing[0] !== undefined && currentuser===listing[0].ownerid ))?(
+  return((listing[0] !== undefined && listing[0].propertystatus==='Active')||(listing[0] !== undefined && currentuser===listing[0].ownerid)||(listing[0] !== undefined && currentuser===process.env.REACT_APP_ADMIN_ID))?(
 
     
     
     <section>
+    
     <PhonePopup showpopup={showPopup} setpopup={setpopup} phonenum={listing[0].ownersphone}/>
+    
       <div class="relative mx-auto max-w-screen-xl px-4 py-8">
         <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
           <div class="grid grid-cols-2 gap-4 md:grid-cols-1">
@@ -96,8 +123,10 @@ function SingleListing() {
 
             <div class="mt-8 flex justify-between">
               <div class="max-w-[35ch]">
-                <h1 class="text-2xl font-bold">{listing[0].propertytitle}</h1>
-
+                <h1 class="text-2xl font-bold">{listing[0].propertytitle} <button onClick={()=>{markSpam(listing[0].propertyuid);setshowSpamForm(!showSpamForm)}} className='group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-2 inline hover:stroke-red-800 hover:fill-red-100  w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
+        </svg></button></h1> <SpamForm showspam={showSpamForm} setshowspam={setshowSpamForm} pid={listing[0].propertyuid}/>
+               
                 <p className="mt-0.5 text-sm font-light">
                   {listing[0].propertycity},
                   <p className="">{location}</p>
@@ -137,7 +166,7 @@ function SingleListing() {
                 {listing[0].ocupstatus}
               </p>
 
-              {(currentuser!==listing[0].ownerid)?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
+              {(currentuser!==listing[0].ownerid && JSON.stringify(currentuser)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID))?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
               <span class="inline-block rounded bg-gray-600 p-2 text-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -275,7 +304,7 @@ function SingleListing() {
                 <p class="mt-2 text-sm leading-relaxed text-gray-500 line-clamp-3">
                  Please avoid any spam emails. The Owner of this property will shortly be in touch with you. Until then browse more!
                 </p>
-              </article>):(<div className="my-12">
+              </article>):(JSON.stringify(currentuser)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID) && currentuser===listing[0].ownerid)?(<div className="my-12">
               <Link to='/MemberPortal/ViewListing'
   className="flex items-center justify-center rounded-xl border-4 border-black bg-gray-200 px-8 py-4 font-bold shadow-[6px_6px_0_0_#000] transition hover:shadow-none focus:outline-none focus:ring active:bg-pink-50"
   
@@ -284,7 +313,42 @@ function SingleListing() {
   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
 </svg>
 
-</Link></div>)}
+</Link></div>):(
+  <div clasName="inline ">
+  <button onClick={()=>updateStatus(listing[0].propertyuid,"Active")} type="button"
+  class="my-5 mx-10 group relative inline-flex items-center overflow-hidden rounded bg-green-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-green-500"
+  
+>
+  <span
+    class="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-4"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+</svg>
+
+  </span>
+
+  <span class="text-sm font-medium transition-all group-hover:mr-4">
+    Approve
+  </span>
+</button>
+<button onClick={()=>updateStatus(listing[0].propertyuid,"Reject")} type="button"
+  class="group relative inline-flex items-center overflow-hidden rounded bg-red-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-red-500"
+  
+>
+  <span
+    class="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-4"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+</svg>
+
+  </span>
+
+  <span class="text-sm font-medium transition-all group-hover:mr-4">
+    Reject
+  </span>
+</button></div>)}
             </div>
           </div>
         </div>
