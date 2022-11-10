@@ -10,6 +10,7 @@ import Sidebar from './components/Sidebar';
 import SingleListing from './components/SingleListing'
 import HomePage from './components/HomePage';
 import AdminSideBar from './components/AdminSideBar';
+import BrowseListings from './components/BrowseListings';
 
 
 
@@ -27,8 +28,10 @@ function App() {
       <Route path="/SingleListing/:propertyid" element={<SingleListing/>}></Route>
       <Route path="/HomePage" element={<HomePage/>}></Route>
       <Route path="/AdminPortal/*" element={<AdminSideBar/>}></Route>
+      <Route path="/Browse" element={<BrowseListings/>}></Route>
     </Routes>
     </BrowserRouter>
+   
   );
 }
 

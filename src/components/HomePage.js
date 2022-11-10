@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import SearchForm from './SearchForm'
+import { Link } from 'react-router-dom';
 
 function HomePage() {
 
@@ -47,6 +48,13 @@ function HomePage() {
         >
           Rent
         </button>
+
+       <Link to="/Browse"> <button type="button"
+          
+          class="block w-full rounded bg-white px-12 py-3 text-sm font-medium text-rose-600 shadow hover:text-rose-700 focus:outline-none focus:ring active:text-rose-500 sm:w-auto"
+        >
+          Browse
+        </button></Link>
       </div>
     </div>
   </div>

@@ -7,6 +7,10 @@ import PendingError from "./PendingError";
 import GoogleMapReact from 'google-map-react';
 import SpamForm from "./SpamForm";
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+
+import {FetchNearby} from './FetchNearby.js'
+
 
 const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -37,12 +41,16 @@ function SingleListing() {
     lng: 0
   }})
 
-  const [showSpamForm,setshowSpamForm] = useState(false)
+  const [showSpamForm,setshowSpamForm] = useState(false);
+
+  const [likeButton,setlikeButton] = useState(false);
+
+  const [nearbyplaces,setnearbyplaces] = useState([]);
 
   let {propertyid} = useParams();
 
 
-  const updateStatus = async (pid,stat) =>{
+  const updateStatus = async (pid,stat) =>{ //this is for admin to apprive or reject pending properties
     let { data, error } = await supabase.rpc('updatestatus', {
         propertyid:pid, 
         stat:stat
@@ -52,14 +60,75 @@ function SingleListing() {
 
 }
 
-const markSpam = async(pid)=>{
+const AddFavorites = async (pid)=>{
+
+    if(likeButton&&likeButton!==undefined){
+      RemoveFavorites(pid)
+      return
+    }
+
+    else{
+      let { data, error } = await supabase.rpc('insertfavorites', {
+        propertyid:pid, 
+        user_id:currentuser
+      })
+
+      console.log(data,error);
+
+      if(!error){
+        setlikeButton(true);
+      }
+
+  }
+
+}
+
+const RemoveFavorites = async (pid)=>{
+
+  let { data, error } = await supabase
+  .rpc('removefavorites', {
+    propertyid:pid, 
+    userid:currentuser
+  })
+
+  if(!error){
+    setlikeButton(false);
+  }else{
+    setlikeButton(undefined);
+  }
+
+}
+
+const checkifFavorite = async()=>{
+
+  let { data, error } = await supabase
+  .rpc('checkiffavorite', {
+    propertyid:propertyid, 
+    userid:currentuser
+  })
+
+  console.log(data,error)
+
+  if(!error){
+    if(data===true){
+      console.log(data);
+      setlikeButton(true);
+    }
+    else{
+      console.log(error)
+      setlikeButton(false);
+    }
+  }
 
 }
 
 
 
+
+
   useEffect(() => {
     //if lisiting blocked, or pending, or rejected, then redirect user to error page
+    checkifFavorite();
 
     supabase
       .rpc("getsinglelisting", {
@@ -79,6 +148,9 @@ const markSpam = async(pid)=>{
         console.log(defaultProps)
         setProps(defaultProps)
         console.log(value);
+
+        //setnearbyplaces(FetchNearby(value.data[0].lati,value.data[0].lngi));
+        //console.log(nearbyplaces);
       });
 
       supabase.rpc('getloggedinuser', {
@@ -90,6 +162,7 @@ const markSpam = async(pid)=>{
         setEmail(value.data[0].useremail);
         let fullname = fname.concat(" ",lname)
         setfullname(fullname);
+
       })
 
       //alert();
@@ -109,7 +182,7 @@ const markSpam = async(pid)=>{
       <div class="relative mx-auto max-w-screen-xl px-4 py-8">
         <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
           <div class="grid grid-cols-2 gap-4 md:grid-cols-1">
-            <img
+            <LazyLoadImage
               alt="Les Paul"
               src={listing[0].imageurl}
               class="aspect-square w-full rounded-xl object-cover"
@@ -123,9 +196,17 @@ const markSpam = async(pid)=>{
 
             <div class="mt-8 flex justify-between">
               <div class="max-w-[35ch]">
-                <h1 class="text-2xl font-bold">{listing[0].propertytitle} <button onClick={()=>{markSpam(listing[0].propertyuid);setshowSpamForm(!showSpamForm)}} className='group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-2 inline hover:stroke-red-800 hover:fill-red-100  w-4 h-4">
+                <h1 class="text-2xl font-bold">{listing[0].propertytitle} 
+                <button onClick={()=>{setshowSpamForm(!showSpamForm)}} className='inline group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-2 inline hover:stroke-red-800 hover:fill-red-100  w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
-        </svg></button></h1> <SpamForm showspam={showSpamForm} setshowspam={setshowSpamForm} pid={listing[0].propertyuid}/>
+              </svg></button>
+      
+              <button onClick={()=>{AddFavorites(listing[0].propertyuid)}} className='inline group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" strokeWidth={1.5}  className={(likeButton)?("w-5 h-5 fill-rose-600"):("w-5 h-5 stroke-black fill-none")}>
+  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+</svg>
+</button>
+        </h1> 
+        <SpamForm showspam={showSpamForm} setshowspam={setshowSpamForm} pid={listing[0].propertyuid}/>
                
                 <p className="mt-0.5 text-sm font-light">
                   {listing[0].propertycity},
@@ -386,7 +467,7 @@ const markSpam = async(pid)=>{
       
     </section>
   
-  ) : (listing[0]!==undefined && listing[0].propertystatus==="Pending")?(
+  ) : (listing[0]!==undefined && listing[0].propertystatus!=="Active")?(
     <PendingError/>
   ):(<div className="text-3xl">Loading....</div>)
 }
