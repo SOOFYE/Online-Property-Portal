@@ -1,5 +1,7 @@
 import React, {useEffect,useState} from 'react'
 import { supabase } from '../supabaseClient'
+import ReactTooltip from 'react-tooltip';
+import {numberWithCommas} from '../Functions/numberWithCommas';
 
 function UserDashboard() {
 
@@ -8,6 +10,10 @@ function UserDashboard() {
     const [pendingCount,setpendingCount] = useState();
     const [ActiveCount,setActiveCount] = useState();
     const [recentListings,setListings] = useState([]);
+    const [Profit,setProfit] = useState(0);
+
+
+
 
     const getpendingstatuscount = async()=>{
       const {data,error} = await supabase.rpc('GetStatusCount', {
@@ -32,7 +38,20 @@ function UserDashboard() {
       console.log(data);
       setListings(data)
 
+    }
 
+    const getsoldprice = async()=>{
+      let { data, error } = await supabase.rpc('getsoldpropertyprice', {
+         ownerid
+      })
+
+      console.log(data,error);
+      if(data!==null){
+        setProfit(numberWithCommas(data));
+      }
+      else{
+        setProfit(0);
+      }
     }
 
   useEffect(()=>{
@@ -40,6 +59,7 @@ function UserDashboard() {
       getpendingstatuscount();
       getactivestatuscount();
       getrecentlisting();
+      getsoldprice();
 
   //   supabase.rpc('GetStatusCount', {
   //   ownerid, 
@@ -78,11 +98,12 @@ function UserDashboard() {
             className="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center"
           >
             <dt className="order-last text-lg font-medium text-gray-500">
-              Total Views
+              Total Profit
             </dt>
   
-            <dd className="text-4xl font-extrabold text-gray-800 md:text-5xl">
-              0
+            <ReactTooltip />
+            <dd data-tip="Profit from all your 'SOLD' Properties" className="text-4xl font-extrabold text-gray-800 md:text-5xl">
+              ${Profit}
             </dd>
           </div>
   

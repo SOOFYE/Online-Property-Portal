@@ -107,9 +107,15 @@ function SearchForm({popup,setpopup,option}) {
     console.log("All Tags", AllTags);
     console.log("Index", index);
 
-    let filteredAllTags = AllTags.filter((element) => {
-      return element != AllTags[index];
+    let filteredAllTags = AllTags.filter((element,i) => {
+      return index!=i;
     });
+
+    let cnt = count;
+    ++cnt;
+    setCount(cnt);
+
+    
 
     console.log("filteredArray: ", filteredAllTags);
 
@@ -143,6 +149,7 @@ function SearchForm({popup,setpopup,option}) {
     settagsArea(ta);
   };
   const AddTags = () => {
+    if(count===0) return;
     console.log("hello world");
     let ct = currentTag;
     if (ct == " " || ct == "" || ct === null || count === 0) return;
@@ -150,7 +157,10 @@ function SearchForm({popup,setpopup,option}) {
     let taggs = [...AllTags, ct]; //will be used to display
     AllTags = taggs;
     setCurrentTag("");
-    //setCurrentTag(" ");
+    let cnt = count;
+    --cnt;
+    setCount(cnt);
+    
     let ta = taggs.map((value, index) => {
       return (
         <p
@@ -534,7 +544,7 @@ function SearchForm({popup,setpopup,option}) {
             <span class="mt-7 absolute inset-y-0 right-0 grid w-10 place-content-center">
               <button
                 type="button"
-                class="rounded-full bg-rose-600 p-0.5 text-white hover:bg-rose-700"
+                class={(count>0)?"rounded-full bg-rose-600 p-0.5 text-white hover:bg-rose-700":("hidden")}
                 onClick={() => AddTags()}
               >
                 <span type="button" class="sr-only">

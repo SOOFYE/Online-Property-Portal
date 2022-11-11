@@ -9,8 +9,9 @@ import SpamForm from "./SpamForm";
 
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-import {FetchNearby} from './FetchNearby.js'
+import ReactTooltip from 'react-tooltip';
 
+import {numberWithCommas} from '../Functions/numberWithCommas';
 
 const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -48,6 +49,8 @@ function SingleListing() {
   const [nearbyplaces,setnearbyplaces] = useState([]);
 
   let {propertyid} = useParams();
+
+
 
 
   const updateStatus = async (pid,stat) =>{ //this is for admin to apprive or reject pending properties
@@ -197,11 +200,14 @@ const checkifFavorite = async()=>{
             <div class="mt-8 flex justify-between">
               <div class="max-w-[35ch]">
                 <h1 class="text-2xl font-bold">{listing[0].propertytitle} 
-                <button onClick={()=>{setshowSpamForm(!showSpamForm)}} className='inline group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-2 inline hover:stroke-red-800 hover:fill-red-100  w-4 h-4">
+                
+                <ReactTooltip />
+                <button data-tip="Report" onClick={()=>{setshowSpamForm(!showSpamForm)}} className='inline group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor" class="mx-2 inline hover:stroke-red-800 hover:fill-red-100  w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
               </svg></button>
-      
-              <button onClick={()=>{AddFavorites(listing[0].propertyuid)}} className='inline group hover:stroke-red'><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" strokeWidth={1.5}  className={(likeButton)?("w-5 h-5 fill-rose-600"):("w-5 h-5 stroke-black fill-none")}>
+
+              <ReactTooltip />
+              <button data-tip={(likeButton)?"Remove from favorites":"Add to favorites"} onClick={()=>{AddFavorites(listing[0].propertyuid)}} className='inline group hover:fill-red-600'><svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="none"  viewBox="0 -3 24 24" strokeWidth={(!likeButton)?".5":"1"}  className={(likeButton)?("w-5 h-5 fill-rose-600 "):("w-5 h-5 stroke-black hover:stroke-none hover:fill-red-500")}>
   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
 </svg>
 </button>
@@ -217,7 +223,7 @@ const checkifFavorite = async()=>{
               </div>
 
               <p className="text-lg font-bold">
-                PKR {listing[0].propertyprice}
+                PKR {numberWithCommas(listing[0].propertyprice)}
               </p>
             </div>
 
