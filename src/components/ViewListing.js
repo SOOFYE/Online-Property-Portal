@@ -28,8 +28,11 @@ function ViewListing() {
             if(data!==null){
                 setListings(data);
             }
-            else
-                setListings("No Listings!");    
+            else if(data===null)
+              setListings(null);
+
+            else if(error)
+                setListings(undefined);    
     }
 
     const MarkasSold=async(pid)=>{
@@ -162,7 +165,7 @@ function ViewListing() {
     
   </section>
   </div>
-  ):(<div className="text-3xl">Loading...</div>)
+  ):(<div>No listings currently added!</div>)
 }
 
 export default ViewListing
