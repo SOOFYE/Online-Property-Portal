@@ -104,6 +104,8 @@ function AddListing() {
 
       e.preventDefault();
 
+      //adduseruuid********************************
+
       supabase
      .storage
      .from('properties')
@@ -214,9 +216,9 @@ function AddListing() {
             if(typeval==='landmark'){
               return setlandMark(value.long_name);
             }
-            return;
+            return null;
           })
-          return;
+          return null;
         })
 
         
@@ -302,7 +304,7 @@ function AddListing() {
           <div>
             <label
               for="purpose"
-              className="text-md font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-dotted underline-offset-4 decoration-2"
             >
               Purpose
             </label>
@@ -347,7 +349,7 @@ function AddListing() {
           <div>
             <label
               for="PropertyType"
-              className="text-sm font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-dotted underline-offset-4 decoration-2"
             >
               Property Type
             </label>
@@ -690,7 +692,7 @@ function AddListing() {
           <div>
             <label
               for="email"
-              className="text-sm font-medium underline decoration-red-700 decoration-double"
+              className="text-sm font-medium underline decoration-red-700 decoration-dotted underline-offset-4 decoration-2"
             >
               Location
             </label>

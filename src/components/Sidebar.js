@@ -3,11 +3,14 @@ import UserDashboard from './UserDashboard'
 import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
 import AddListing from './AddListing';
 import ViewListing from './ViewListing'
+import AddArticles from './AddArticles';
 
 function Sidebar() {
 
     const [dropdown,setdropdown] = useState(false)
+    const [dropdown2,setdropdown2] = useState(false)
     const handleDropdown = ()=>{setdropdown(!dropdown)}
+    const handleDropdown2 = ()=>{setdropdown2(!dropdown2)}
 
   return (
 
@@ -56,11 +59,27 @@ function Sidebar() {
                <span className="inline-flex justify-center items-center p-3 ml-3 w-3 h-3 text-sm font-medium text-blue-600 bg-blue-200 rounded-full dark:bg-blue-900 dark:text-blue-200">3</span>
             </a>
          </li>
+
          <li>
-            <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-               <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-               <span className="flex-1 ml-3 whitespace-nowrap">Agents Assigned</span>
-            </a>
+            <button onClick={handleDropdown2} type="button" className="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+            </svg>
+
+                  <span className="flex-1 ml-3 text-left whitespace-nowrap" sidebar-toggle-item>Blogs</span>
+                  <svg sidebar-toggle-item className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+            <ul id="dropdown-example" className={(dropdown2)?"py-2 space-y-2":"hidden py-2 space-y-2"}>
+                  <li>
+                     <Link to='./AddArticles' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Add Articles</Link>
+                  </li>
+                  <li>
+                  <Link to='./ViewListing' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Articles</Link>
+                  </li>
+                  <li>
+                     <a href="\home" className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Sold Listing's</a>
+                  </li>
+            </ul>
          </li>
          <li>
             <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -92,6 +111,7 @@ function Sidebar() {
     <Route path="/UserDashboard" element={<UserDashboard/>}></Route>
     <Route path="/AddListing" element={<AddListing/>}></Route>
     <Route path="/ViewListing" element={<ViewListing/>}></Route>
+    <Route path="/AddArticles" element={<AddArticles/>}></Route>
     </Routes>
  </div>
   )

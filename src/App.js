@@ -14,6 +14,9 @@ import AdminSideBar from './components/AdminSideBar';
 import BrowseListings from './components/BrowseListings';
 import Notification from './components/Notification';
 import { useEffect } from 'react';
+import AddArticles from './components/AddArticles';
+import BrowseBlog from './components/BrowseBlog';
+import SingleBlog from './components/SingleBlog';
 
 
 
@@ -93,6 +96,8 @@ useEffect(()=>{
       <Route path="/Browse" element={<BrowseListings/>}></Route>
       <Route path="/Notifications" element={<Notification setnotificationBadge={setnotificationBadge} getNotifications={getNotifications} MarkNotificationASRead={MarkNotificationASRead}
       notifications={notifications} />}></Route>
+      <Route path="/BrowseBlogs" element={<BrowseBlog/>}></Route>
+      <Route path="/SingleBlog/:blogid" element={<SingleBlog/>}></Route>
     </Routes>
     </BrowserRouter>
    

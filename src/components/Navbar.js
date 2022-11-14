@@ -78,12 +78,11 @@ function Navbar({ loggedIn, notificationBadge }) {
                 </li>
 
                 <li>
-                  <a
+                  <Link to='/BrowseBlogs'
                     className="text-gray-500 transition hover:text-gray-500/75"
-                    href="/home"
                   >
                     Blog
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
