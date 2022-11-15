@@ -3,15 +3,13 @@ import { supabase } from "../supabaseClient";
 import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import PhonePopup from "./PhonePopup";
 import PendingError from "./PendingError";
-
 import GoogleMapReact from 'google-map-react';
 import SpamForm from "./SpamForm";
-
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-
 import ReactTooltip from 'react-tooltip';
-
 import {numberWithCommas} from '../Functions/numberWithCommas';
+
+import emailjs from '@emailjs/browser';
 
 const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -48,6 +46,10 @@ function SingleListing() {
 
   const [nearbyplaces,setnearbyplaces] = useState([]);
 
+  const [message, setMessage] = useState("");
+
+  const [sendEmailButton,setemailbutton] = useState(true)
+  const [emailbuttonmessage,setemailbuttonmessage] = useState("Message")
   let {propertyid} = useParams();
 
 
@@ -122,6 +124,48 @@ const checkifFavorite = async()=>{
       setlikeButton(false);
     }
   }
+
+}
+
+const handleMessage = (e)=>{
+  setMessage(e.target.value);
+}
+
+
+const handleSubmit = (e)=>{
+
+  e.preventDefault();
+
+  let fullname = fulllname;
+  let ownername = listing[0].ownersfirstname + " " + listing[0].ownerslastname;
+  
+
+
+
+  const template = {
+    client_name:fullname,
+    owner_name: ownername,
+    property_id: propertyid,
+    message: message,
+    client_email: email,
+    owner_email: listing[0].ownersemail
+  }
+
+
+  emailjs.send("service_rv4s9zs","template_pmbpmil",template,'pIHPLRwRr3fbG4sPv')
+  .then((response) => {
+    setemailbutton(false);
+    setemailbuttonmessage("Sent")
+    setTimeout(()=>{
+      setemailbutton(true)
+      setemailbuttonmessage("Message")
+    },5000);
+    
+    console.log('SUCCESS!', response.status, response.text);
+ }, (err) => {
+    console.log('FAILED...', err);
+ });
+
 
 }
 
@@ -253,6 +297,13 @@ const checkifFavorite = async()=>{
                 {listing[0].ocupstatus}
               </p>
 
+              <legend className="mb-1 text-sm font-medium">
+                Bedrooms
+              </legend>
+              <p className="mt-0.2 mb-3 mx-1 text-sm font-light">
+                {listing[0].beds}
+              </p>
+
               {(currentuser!==listing[0].ownerid && JSON.stringify(currentuser)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID))?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
               <span class="inline-block rounded bg-gray-600 p-2 text-white">
                   <svg
@@ -277,7 +328,7 @@ const checkifFavorite = async()=>{
                   </h3>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
 
                 <div className="mb-2">
 
@@ -296,6 +347,7 @@ const checkifFavorite = async()=>{
                       placeholder="anthony@rhcp.com"
                       value={email}
                       className=" mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                      required
 
                     />
                   </label>
@@ -317,6 +369,7 @@ const checkifFavorite = async()=>{
                       value = {fulllname}
                       placeholder="Anthony Raymens"
                       className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                      required
                     />
                     </label>
                     </div>
@@ -332,7 +385,8 @@ const checkifFavorite = async()=>{
                     </span>
 
                     <textarea
-             
+                    value={message}
+              onChange={handleMessage}
               id="message"
               rows="4"
               class="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
@@ -365,8 +419,8 @@ const checkifFavorite = async()=>{
                         </span>
                         </button>
                         
-                        <button
-                        className=" col-span-1 mx-5 justify-self-start group relative inline-flex items-center overflow-hidden rounded border border-current px-8 py-3 text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                        <button type="submit" disabled={!sendEmailButton}
+                        className="col-span-1 mx-5 justify-self-start group relative inline-flex items-center overflow-hidden rounded border border-current px-8 py-3 text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                         
                         >
                         <span
@@ -379,7 +433,7 @@ const checkifFavorite = async()=>{
                         </span>
 
                         <span class="text-sm font-medium transition-all group-hover:mr-4">
-                            Message
+                            {emailbuttonmessage}
                         </span>
                         </button>
                     </div>

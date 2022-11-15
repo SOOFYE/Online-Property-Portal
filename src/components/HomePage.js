@@ -9,6 +9,7 @@ function HomePage() {
   
 
   return (
+    <div>
 
     <section
   class="relative bg-[url(https://images.unsplash.com/photo-1604014237800-1c9102c219da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)] bg-cover bg-center bg-no-repeat"
@@ -58,56 +59,27 @@ function HomePage() {
       </div>
     </div>
   </div>
+
 </section>
 
 
-//     <section className="bg-fixed bg-center" style={{'backgroundImage': `url("https://ffixephepheoizedsluo.supabase.co/storage/v1/object/public/other-pics/sofia-sanchez-UcoDZZ7DCXY-unsplash.jpg")`}} >
-//     <SearchForm popup={openPopup} setpopup={setpopup} option={option}/>
-//   <div className="p-8 md:p-12 lg:px-16 lg:py-24">
-//     <div className="mx-auto max-w-lg text-center">
-//       <h2 className="text-2xl mb-5 font-bold text-white md:text-3xl">
-//         Search properties in Pakistan
-//       </h2>
-//     </div>
+<div className='grid grid-cols-10 gap-10 overflow-hidden  '>
 
-//     <div className="mx-auto mt-8 max-w-xl">
-//      <div className="grid grid-flow-row-dense grid-col-12 gap-4">
-//      <div className="flex justify-center">
-//         <button onClick={()=>{setoption("Buy");setpopup(true)}}
-//           class="col-span-3 mr-[7rem] group relative inline-block text-sm font-medium text-indigo-600 focus:outline-none  active:text-white"
-          
-//         >
-//           <span class="absolute inset-0 border border-current "></span>
-//           <span
-//             class="block border border-current bg-gray-300 active:bg-indigo-500 px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1"
-//           >
-//               Buy
-//           </span>
-//         </button>
-//         <button onClick={()=>{setoption("Rent");setpopup(true)}}
-//           class="col-span-3 group relative inline-block text-sm font-medium text-indigo-600 focus:outline-none active:text-white"
-          
-//         >
-//           <span class="absolute inset-0 border border-current "></span>
-//           <span
-//             className="block border border-current bg-gray-300 active:bg-indigo-500 px-12 py-3 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1"
-//           >
-//               Rent
-//           </span>
-//         </button>
-//      </div>
-//      </div>
-//     </div>
-//     <div className="my-5 flex justify-start">
-//       <p className="text-xl text-white font-bold">Explore more on FindyourHome.com</p>
-//     </div>
-//     <div>
+<Link to="/AreaUnitCoverter" ><div className='mt-4 mx-5 group rounded-2xl bg-green-700 w-[100px] h-[100px] grid col-span-1 place-items-center'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"  class="w-14 h-14 stroke-green-100">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z" />
+</svg>
+<div className="invisible group-hover:visible rounded-2xl absolute bg-gray-800 opacity-90  grid place-items-center w-[100px] h-[100px] font-bold  text-white text-center ">Area Unit Converter </div>
+</div></Link>
 
-//     </div>
-//   </div>
+<div className='inline mt-4 mx-5 group rounded-2xl bg-yellow-700 w-[100px] h-[100px] grid col-span-1  place-items-center  '><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-14 h-14 stroke-yellow-100">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+</svg>
+<div className="invisible group-hover:visible rounded-2xl absolute bg-gray-800 opacity-90  grid place-items-center w-[100px] h-[100px] font-bold  text-white text-center ">Loan Calculator</div>
+</div>
 
-  
-// </section>
+</div>
+
+</div>
   )
 }
 

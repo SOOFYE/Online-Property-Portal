@@ -4,6 +4,7 @@ import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
 import AddListing from './AddListing';
 import ViewListing from './ViewListing'
 import AddArticles from './AddArticles';
+import ViewArticles from './ViewArticles';
 
 function Sidebar() {
 
@@ -40,9 +41,7 @@ function Sidebar() {
                   <li>
                   <Link to='./ViewListing' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Listing's</Link>
                   </li>
-                  <li>
-                     <a href="\home" className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Sold Listing's</a>
-                  </li>
+                  
             </ul>
          </li>
          {/* <li>
@@ -74,11 +73,9 @@ function Sidebar() {
                      <Link to='./AddArticles' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Add Articles</Link>
                   </li>
                   <li>
-                  <Link to='./ViewListing' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Articles</Link>
+                  <Link to='./ViewArticles' className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">View Articles</Link>
                   </li>
-                  <li>
-                     <a href="\home" className="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Sold Listing's</a>
-                  </li>
+                  
             </ul>
          </li>
          <li>
@@ -112,6 +109,7 @@ function Sidebar() {
     <Route path="/AddListing" element={<AddListing/>}></Route>
     <Route path="/ViewListing" element={<ViewListing/>}></Route>
     <Route path="/AddArticles" element={<AddArticles/>}></Route>
+    <Route path="/ViewArticles" element={<ViewArticles/>}></Route>
     </Routes>
  </div>
   )

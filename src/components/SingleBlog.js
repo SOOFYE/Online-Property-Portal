@@ -19,6 +19,7 @@ function SingleBlog() {
     const [CommentIDforReply,setCID] = useState([]);
 
     const ref = useRef(null);
+    const repliesref = useRef(null);
 
     const handeleComment = (e)=>{
         setcomm(e.target.value);
@@ -30,7 +31,7 @@ function SingleBlog() {
             blogid: blogid
         })
             if (error) console.error(error)
-            else {console.log(data)
+            else {console.log(data,error)
                 setBlogData(data);
                     }
     }
@@ -41,7 +42,7 @@ function SingleBlog() {
           BlogID: blogid,
           UserID: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
           Comment: Comm
-        }).then((value)=>console.log("commented PosteD: ",value))
+        }).then((value)=>{console.log("commented PosteD: ",value);getBlogcomments();setcomm("")})
     }
 
     const submitReply = async()=>{
@@ -50,7 +51,7 @@ function SingleBlog() {
           CommentID: CommentIDforReply,
           UserID: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
           Comment: Comm
-        }).then((value)=>console.log("Reply PosteD: ",value))
+        }).then((value)=>{console.log("Reply PosteD: ",value);getBlogReplies();setcomm("");setPostComment(true)})
     }
 
     const getBlogcomments = async()=>{
@@ -110,7 +111,7 @@ function SingleBlog() {
 
     },[])
 
-  return(BlogData!==undefined && BlogData!==null && BlogData.length!==0 &&blogsComments.length!==0 )? (
+  return(BlogData!==undefined && BlogData!==null && BlogData.length!==0)? (
 <div>
 <main class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900">
   <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">
@@ -151,7 +152,7 @@ function SingleBlog() {
                       class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
                       Post comment
                   </button>):(
-                  <><button type="submit"
+                  <><button type="submit" onClick={()=>{repliesref.current?.scrollIntoView({ behavior: 'smooth' })}}
                                           class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
                                           Reply
                                       </button><button type="button" onClick={()=>setPostComment(true)}
@@ -159,8 +160,10 @@ function SingleBlog() {
                                               Cancel
                                           </button></>)}
               </form>
-              {blogsComments.map((value)=>
-              <><article class="p-6 mb-6 text-base bg-white rounded-lg dark:bg-gray-900">
+              <div style={{"overflow-y":"scroll", "height":"750px"}}>
+              {(blogsComments.length!==0 &&blogsComments!==null && blogsComments!==undefined )?(blogsComments.map((value)=>
+              <div>
+              <article class="p-6 mb-6 text-base bg-gray-100 rounded-lg dark:bg-gray-700">
                       <footer class="flex justify-between items-center mb-2">
                           <div class="flex items-center">
                               <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white"><img
@@ -174,7 +177,7 @@ function SingleBlog() {
                       </footer>
                       <p>{value.comment}</p>
                       <div class="flex items-center mt-4 space-x-4">
-                          <button type="button" onClick={() => { setPostComment(false); ref.current?.scrollIntoView({ behavior: 'smooth' });setCID(value.comid) } }
+                          <button type="button" onClick={(e) => {setPostComment(false); ref.current?.scrollIntoView({ behavior: 'smooth' });setCID(value.comid);repliesref.current=e.target } }
                               class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400">
                               <svg aria-hidden="true" class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                               Reply
@@ -182,7 +185,7 @@ function SingleBlog() {
                       </div>
                   </article>
                   
-                  {blogReplyComments.map((valuee)=>
+                  {(blogReplyComments.length!==0 && blogReplyComments!==null && blogReplyComments!==undefined )?(blogReplyComments.map((valuee)=>
                   (valuee.commid===value.comid)?(<article class="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
                           <footer class="flex justify-between items-center mb-2">
                               <div class="flex items-center">
@@ -196,7 +199,8 @@ function SingleBlog() {
                           </footer>
                           <p>{valuee.comment}</p>
 
-                      </article>):(null))}</>)}
+                      </article>):(null))):(null)}</div>)):(<div>No comments Posted!</div>)}
+                      </div>
           </section>
       </article>
   </div>

@@ -17,6 +17,9 @@ import { useEffect } from 'react';
 import AddArticles from './components/AddArticles';
 import BrowseBlog from './components/BrowseBlog';
 import SingleBlog from './components/SingleBlog';
+import UnitConverter from './components/UnitConverter';
+import FavoriteList from './components/FavoriteList';
+
 
 
 
@@ -86,6 +89,7 @@ useEffect(()=>{
   return (
     <BrowserRouter>
     <Navbar loggedIn={loggedIn} notificationBadge={notificationBadge}/>
+   
     <Routes>
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
@@ -98,6 +102,9 @@ useEffect(()=>{
       notifications={notifications} />}></Route>
       <Route path="/BrowseBlogs" element={<BrowseBlog/>}></Route>
       <Route path="/SingleBlog/:blogid" element={<SingleBlog/>}></Route>
+      <Route path="/AreaUnitCoverter" element={<UnitConverter/>}></Route>
+      <Route path="/ViewFavoriteList" element={<FavoriteList/>}></Route>
+      
     </Routes>
     </BrowserRouter>
    

@@ -81,7 +81,7 @@ function BrowseBlog() {
 
   let date = new Date(value.daate);
 
-  return(<article class="flex bg-white transition hover:shadow-xl">
+  return(<article class="flex bg-white transition hover:shadow-xl mt-5">
   
   <div class="rotate-180 p-2 [writing-mode:_vertical-lr]">
     <time
