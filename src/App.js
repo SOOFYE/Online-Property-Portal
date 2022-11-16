@@ -19,6 +19,7 @@ import BrowseBlog from './components/BrowseBlog';
 import SingleBlog from './components/SingleBlog';
 import UnitConverter from './components/UnitConverter';
 import FavoriteList from './components/FavoriteList';
+import MortageCalculator from './components/MortageCalculator';
 
 
 
@@ -89,7 +90,6 @@ useEffect(()=>{
   return (
     <BrowserRouter>
     <Navbar loggedIn={loggedIn} notificationBadge={notificationBadge}/>
-   
     <Routes>
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
@@ -103,6 +103,7 @@ useEffect(()=>{
       <Route path="/BrowseBlogs" element={<BrowseBlog/>}></Route>
       <Route path="/SingleBlog/:blogid" element={<SingleBlog/>}></Route>
       <Route path="/AreaUnitCoverter" element={<UnitConverter/>}></Route>
+      <Route path="/MortageCalculator" element={<MortageCalculator/>}></Route>
       <Route path="/ViewFavoriteList" element={<FavoriteList/>}></Route>
       
     </Routes>
