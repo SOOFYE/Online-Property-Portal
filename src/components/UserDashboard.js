@@ -83,7 +83,7 @@ function UserDashboard() {
     <section className="bg-white row-span-3 col-span-7">
     <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold text-indigo-600 sm:text-4xl">
+        <h2 className="text-3xl font-bold text-rose-600 sm:text-4xl">
           Your Property Stats
         </h2>
   
@@ -134,7 +134,7 @@ function UserDashboard() {
     <section className="bg-white row-span-4 col-span-7">
     <div className="mx-auto max-w-screen-xl px-4 py-10 sm:px-5 md:py-13 lg:px-8">
       <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold text-indigo-600 sm:text-4xl mb-4">
+        <h2 className="text-3xl font-bold text-rose-600 sm:text-4xl mb-4">
           Your Recent Listings
         </h2>
 

@@ -8,10 +8,11 @@ import SpamForm from "./SpamForm";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import ReactTooltip from 'react-tooltip';
 import {numberWithCommas} from '../Functions/numberWithCommas';
-
 import emailjs from '@emailjs/browser';
+import axios from "axios"
 
-const AnyReactComponent = ({ text }) => <div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
+const AnyReactComponent = ({ text }) => <div>
+<svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-5 h-5">
 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
 </svg>
@@ -190,11 +191,19 @@ const handleSubmit = (e)=>{
             lat: value.data[0].lati,
             lng: value.data[0].lngi
           },
-          zoom: 15
+          zoom: 17
         };
         console.log(defaultProps)
         setProps(defaultProps)
         console.log(value);
+
+        // axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${value.data[0].lati}%2C${value.data[0].lngi}&radius=1500&type=restaurant&keyword=${value.data[0].propertycity}&key=AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc`
+        // ,{headers: { 
+
+        //   'Access-Control-Allow-Origin' : '*',
+        //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        // }}).then(value=>console.log("NEARBY: ",value))
+        // .catch(error=>console.log("NEARBY ERROR: ",error))
 
         //setnearbyplaces(FetchNearby(value.data[0].lati,value.data[0].lngi));
         //console.log(nearbyplaces);
@@ -251,7 +260,7 @@ const handleSubmit = (e)=>{
               </svg></button>
 
               <ReactTooltip />
-              <button data-tip={(likeButton)?"Remove from favorites":"Add to favorites"} onClick={()=>{AddFavorites(listing[0].propertyuid)}} className='inline group hover:fill-red-600'><svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="none"  viewBox="0 -3 24 24" strokeWidth={(!likeButton)?".5":"1"}  className={(likeButton)?("w-5 h-5 fill-rose-600 "):("w-5 h-5 stroke-black hover:stroke-none hover:fill-red-500 dark:stoke-white")}>
+              <button data-tip={(likeButton)?"Remove from favorites":"Add to favorites"} onClick={()=>{AddFavorites(listing[0].propertyuid)}} className='inline group hover:fill-red-600'><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -3 24 24" strokeWidth={(!likeButton)?".5":"1"}  className={(likeButton)?("w-5 h-5 fill-rose-600 "):("w-5 h-5 stroke-black fill-none hover:stroke-none hover:fill-red-500 dark:stoke-white dark:fill-white")}>
   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
 </svg>
 </button>
@@ -508,6 +517,9 @@ const handleSubmit = (e)=>{
     
        <div style={{ height: '60vh', width: '100%' }}>
       <GoogleMapReact
+          options={{
+              styles: [{ stylers: [{ 'saturation': 50 }, { 'gamma': 0.5 }] }]
+        }}
         bootstrapURLKeys={{ key: "AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc" }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}

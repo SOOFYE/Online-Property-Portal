@@ -1,9 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { LoginContext } from '../Contexts/LoginContext';
+import { supabase } from '../supabaseClient'
+import { useNavigate,Link } from "react-router-dom";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 function Signin() {
-    const [emailValColor,setemailColor] = useState('h-5 w-5 text-gray-400')
-    const [passwordValColor,setpasswordColor] = useState('h-5 w-5 text-gray-400')
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+
+  const navigate = useNavigate();
+
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [errorMessage,setErrorMessage] = useState("");
+  const [successMessage,setSuccessMessage] = useState("");
+
+  const handleEmail=(e)=>{setEmail(e.target.value)};
+  const handlePassword=(e)=>{setPassword(e.target.value)};
+   
+
+
+
+    const login = async(e)=>{
+
+      e.preventDefault();
+
+      const { user, session, error } =  await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      })
+
+      console.log(user,session,error);
+
+      if(error===null){
+        getSessions();
+      }
+      else{
+        console.log(error.message);
+        setErrorMessage(error.message);
+      }
+
       
+
+
+    }
+
+    const getSessions = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+      if(error===null&&data.session!==null){
+        setuserID(data.session.user.id);
+        setErrorMessage(null);
+        setSuccessMessage("Logged in")
+        setuserType("Member");
+        SetloggedIn(true);
+
+        setTimeout(()=>{
+          navigate("/HomePage")
+        },1500)
+        
+
+      }
+      else{
+        SetloggedIn(false);
+        setSuccessMessage(null);
+        setErrorMessage(error.message);
+        navigate("/signin");
+      }
+      console.log(data.session.user.id,error);
+    }
+
+    // const signOut = async()=>{
+    //   const { error } = await supabase.auth.signOut();
+    //   getSessions();
+    // }
+
   
     return (
       
@@ -14,21 +85,24 @@ function Signin() {
   
       </div>
   
-      <form action="" className="mx-auto mt-8 mb-0 max-w-md space-y-4">
+      <form onSubmit={login} className="mx-auto mt-8 mb-0 max-w-md space-y-4">
         <div>
           <label for="email" className="sr-only">Email</label>
   
           <div className="relative">
             <input
+            value={email}
+            onChange={handleEmail}
               type="email"
               className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
               placeholder="Enter email"
+              required
             />
   
             <span className="absolute inset-y-0 right-4 inline-flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={emailValColor}
+                
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -48,15 +122,31 @@ function Signin() {
           <label for="password" className="sr-only">Password</label>
           <div className="relative">
             <input
+            value={password}
+              onChange={handlePassword}
               type="password"
               className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
               placeholder="Enter password"
+              required
             />
+            {(errorMessage)?(<div role="alert" className=" col-span-6 mt-8 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-red-500 bg-red-50 p-4">
+                  <strong className="block font-medium text-red-700"> Something went wrong: </strong>
+
+                    <p className="mt-1 text-sm text-red-700">
+                    {errorMessage}
+                    </p>
+                  </div>):(successMessage)?(<div role="alert" className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-green-500 bg-green-50 p-4">
+              <strong className="block font-medium text-green-700"> Success! </strong>
+
+                <p className="mt-1 text-sm text-green-700">
+                {successMessage}
+                </p>
+              </div>):(<div></div>)}
   
             <span className="absolute inset-y-0 right-4 inline-flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={passwordValColor}
+               
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -81,7 +171,7 @@ function Signin() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
             No account?
-            <a href="\signup" className="underline">Sign up</a>
+            <Link to="/register" className="underline">Sign up</Link>
           </p>
   
           <button
@@ -95,11 +185,12 @@ function Signin() {
     </div>
   
     <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
-      <img
-        alt="Welcome"
-        src="https://images.unsplash.com/photo-1630450202872-e0829c9d6172?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+   
+        <LazyLoadImage
+          alt="property"
+          src="https://ffixephepheoizedsluo.supabase.co/storage/v1/object/public/properties/vu-anh-TiVPTYCG_3E-unsplash.jpg"
+          className="absolute inset-0 h-full w-full object-cover"
+          />
     </div>
   </section>
     )

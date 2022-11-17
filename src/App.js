@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../src/supabaseClient'
 
 import './App.css';
-import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter,Routes, Route, Link, useNavigate } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Signin from './components/Signin';
 import Signup from './components/Signup';
@@ -20,15 +20,24 @@ import SingleBlog from './components/SingleBlog';
 import UnitConverter from './components/UnitConverter';
 import FavoriteList from './components/FavoriteList';
 import MortageCalculator from './components/MortageCalculator';
+import FilteredResults from './components/FilteredResults';
+
+
+import  {LoginContext} from "./Contexts/LoginContext";
 
 
 
 
 function App() {
 
-  const [loggedIn,SetloggedIn] = useState(true);
+  const navigate = useNavigate();
+
+  const [loggedIn,SetloggedIn] = useState(false);
+  const [userID,setuserID] = useState("");
+  const [userType,setuserType] = useState("");
   const [notificationBadge,setnotificationBadge] = useState(false);
   const [notifications,setnotifications] = useState([]);
+  const [filteredResults,setFilRes] = useState([]);
 
   const currentuser = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
 
@@ -81,21 +90,45 @@ const MarkNotificationASRead = async(notid) =>{
  
 }
 
+const confirmSessionApp = async()=>{
+  const { data, error } = await supabase.auth.getSession();
+  console.log(data,error);
+  if(error===null&&data.session!==null){
+    setuserID(data.session.user.id);
+    setuserType("Member");
+    SetloggedIn(true);
+
+    setTimeout(()=>{
+      getNotifications();
+      //navigate("/HomePage")
+    },1500)
+    
+
+  }
+  else{
+    setuserID(null);
+    setuserType("");
+    SetloggedIn(false);
+  }
+  //console.log(data.session.user.id,error);
+}
+
 useEffect(()=>{
 
-  getNotifications();
+  confirmSessionApp();
 
 },[])
 
   return (
-    <BrowserRouter>
-    <Navbar loggedIn={loggedIn} notificationBadge={notificationBadge}/>
+    <LoginContext.Provider value={{loggedIn,SetloggedIn,userID,userType,setuserID,setuserType}}>
+   
+    <Navbar notificationBadge={notificationBadge}/>
     <Routes>
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
       <Route path="/MemberPortal/*" element={<Sidebar/>}></Route>
       <Route path="/SingleListing/:propertyid" element={<SingleListing/>}></Route>
-      <Route path="/HomePage" element={<HomePage/>}></Route>
+      <Route path="/HomePage" element={<HomePage setFilRes={setFilRes}/>}></Route>
       <Route path="/AdminPortal/*" element={<AdminSideBar/>}></Route>
       <Route path="/Browse" element={<BrowseListings/>}></Route>
       <Route path="/Notifications" element={<Notification setnotificationBadge={setnotificationBadge} getNotifications={getNotifications} MarkNotificationASRead={MarkNotificationASRead}
@@ -105,10 +138,10 @@ useEffect(()=>{
       <Route path="/AreaUnitCoverter" element={<UnitConverter/>}></Route>
       <Route path="/MortageCalculator" element={<MortageCalculator/>}></Route>
       <Route path="/ViewFavoriteList" element={<FavoriteList/>}></Route>
-      
+      <Route path="/FilteredResults" element={<FilteredResults filteredResults={filteredResults}/>}></Route>   
     </Routes>
-    </BrowserRouter>
-   
+
+  </LoginContext.Provider>
   );
 }
 

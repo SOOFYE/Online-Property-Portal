@@ -1,17 +1,54 @@
-import React, {useState} from 'react'
+import React, {useState,useContext} from 'react'
 import UserDashboard from './UserDashboard'
-import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter,Routes, Route, Link,useNavigate } from "react-router-dom";
 import AddListing from './AddListing';
 import ViewListing from './ViewListing'
 import AddArticles from './AddArticles';
 import ViewArticles from './ViewArticles';
+import { supabase } from '../supabaseClient'
+import { LoginContext } from '../Contexts/LoginContext';
+import { useEffect } from 'react';
 
 function Sidebar() {
+
+   const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+   const navigate = useNavigate();
 
     const [dropdown,setdropdown] = useState(false)
     const [dropdown2,setdropdown2] = useState(false)
     const handleDropdown = ()=>{setdropdown(!dropdown)}
     const handleDropdown2 = ()=>{setdropdown2(!dropdown2)}
+
+
+    const signout = async()=>{
+      const { error } = await supabase.auth.signOut();
+      SetloggedIn(false);
+      navigate("/signin");
+    }
+
+    const confirmSessionSide = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+
+      if(error===null&&data.session!==null){
+
+      if(data.session.user.id!=='47a6cf34-4c31-4209-8c7a-b58f554a9039' && loggedIn===true && data.session.user.id === userID  )
+         navigate("/MemberPortal/");
+
+      else if(data.session.user.id==='47a6cf34-4c31-4209-8c7a-b58f554a9039' && loggedIn===true && data.session.user.id === userID)
+      navigate("/AdminPortal/");
+
+    }
+
+    else {
+      navigate("/signin");
+   }
+
+   }
+
+   useEffect(()=>{
+      confirmSessionSide();
+   },[]);
+
 
   return (
 
@@ -87,13 +124,13 @@ function Sidebar() {
             </a>
          </li>
          <li>
-            <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button onClick={()=>signout()} className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 </svg>
 
                <span className="flex-1 ml-3 whitespace-nowrap">Sign Out</span>
-            </a>
+            </button>
          </li>
          {/* <li>
             <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">

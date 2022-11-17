@@ -111,12 +111,6 @@ function Signup() {
 
     }
     
-
-
-    
-
-
-
     // console.log(
     //   firstname,
     //   lastname,

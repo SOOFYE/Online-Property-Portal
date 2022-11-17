@@ -1,11 +1,12 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { LoginContext } from "../Contexts/LoginContext";
 import Notification from "./Notification";
 
-function Navbar({ loggedIn, notificationBadge }) {
 
-  
+function Navbar({ notificationBadge }) {
 
+  const {loggedIn} = useContext(LoginContext);
 
 
   return (

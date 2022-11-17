@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import { supabase } from '../supabaseClient'
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
 
 const Homes = [
     "House",
@@ -30,7 +32,12 @@ const Homes = [
 let AllTags = []; //tags of all cities
 let cc = 6;
 
-function SearchForm({popup,setpopup,option}) {
+function SearchForm({popup,setpopup,option,setFilRes}) {
+
+
+  const navigate = useNavigate();
+
+
   const [tagsArea, settagsArea] = useState([]);
   const [currentTag, setCurrentTag] = useState("");
   const [count, setCount] = useState(6);
@@ -224,6 +231,13 @@ function SearchForm({popup,setpopup,option}) {
 
     console.log("bedrooms", city);
 
+    let op = option;
+
+    if(option==='Buy')
+      op = 'Sale'
+    else
+      op = 'Rent'  
+
     supabase
   .rpc('getfilteredresults', {
     bedroomss, 
@@ -233,13 +247,29 @@ function SearchForm({popup,setpopup,option}) {
     minarea: parseInt(minarea), 
     minprice: parseInt(minprice), 
     propertytype:properyTypeF, 
-    tags: AllTags.toString()
-  }).then((value)=>console.log(value)); //navigate
+    tags: AllTags.toString(),
+    purpose:op
+  }).then((value)=>{
+
+    console.log(value);
+
+    setFilRes(value.data);
+
+    setTimeout(()=>{
+    navigate('/FilteredResults');
+  },2000)
+
+  AllTags=[];
+
+
+}); //navigate
 
     
-
-
   }
+
+  useEffect(()=>{
+
+  },[popup])
 
   return (popup)? (
     <div>
