@@ -1,11 +1,14 @@
-import React, {useEffect,useState} from 'react'
+import React, {useEffect,useState,useContext} from 'react'
 import { supabase } from '../supabaseClient'
 import ReactTooltip from 'react-tooltip';
 import {numberWithCommas} from '../Functions/numberWithCommas';
+import { LoginContext } from '../Contexts/LoginContext';
 
 function UserDashboard() {
 
-  const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
+  //const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
     const [pendingCount,setpendingCount] = useState();
     const [ActiveCount,setActiveCount] = useState();
@@ -17,7 +20,7 @@ function UserDashboard() {
 
     const getpendingstatuscount = async()=>{
       const {data,error} = await supabase.rpc('GetStatusCount', {
-        ownerid, 
+        ownerid:userID, 
         statusvalue:"Pending"
       })
       setpendingCount(data)
@@ -25,7 +28,7 @@ function UserDashboard() {
 
     const getactivestatuscount = async()=>{
       const {data,error} = await supabase.rpc('GetStatusCount', {
-        ownerid, 
+        ownerid:userID, 
         statusvalue:"Active"
       })
       setActiveCount(data)
@@ -33,7 +36,7 @@ function UserDashboard() {
 
     const getrecentlisting = async()=>{
       const {data,error} = await supabase.rpc('getrecentlistings', {
-        ownerid
+        ownerid:userID
       })
       console.log(data);
       setListings(data)
@@ -42,7 +45,7 @@ function UserDashboard() {
 
     const getsoldprice = async()=>{
       let { data, error } = await supabase.rpc('getsoldpropertyprice', {
-         ownerid
+         ownerid:userID
       })
 
       console.log(data,error);

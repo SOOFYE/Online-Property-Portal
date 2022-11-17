@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -9,6 +9,8 @@ import { ToWords } from "to-words";
 import { supabase } from '../supabaseClient'
 
 import { Navigate, useNavigate } from "react-router-dom";
+
+import { LoginContext } from '../Contexts/LoginContext';
 
 const toWords = new ToWords({
   localeCode: "en-IN",
@@ -36,6 +38,8 @@ const searchOptions = {
 };
 
 function AddListing() {
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
   const navigate = useNavigate();
 
@@ -118,7 +122,7 @@ function AddListing() {
       supabase
      .storage
      .from('properties')
-     .upload(`UIDd${selectedImage.name}`+Math.random(), selectedImage)
+     .upload(`${userID}${selectedImage.name}`+Math.random(), selectedImage)
      .then(value=>{
       console.log("Sent!: ",value.data.path);
       setimagePath(value.data.path);
@@ -128,7 +132,7 @@ function AddListing() {
         
         supabase.from('properties')
         .insert({
-          Owner_uuid: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
+          Owner_uuid: userID,
           Purpose: purpose,
           PropertyType: properyTypeF,
           City: City,
@@ -145,7 +149,8 @@ function AddListing() {
           neighbourhood: neighbourhood,
           sublocal1: sublocality_level_1,
           sublocal2: sublocality_level_2,
-          landmark: landMark
+          landmark: landMark,
+          Bedrooms: bedrooms
   
         })
         .then(value=>{

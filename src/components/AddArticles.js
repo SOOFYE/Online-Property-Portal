@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { supabase } from "../supabaseClient";
+import { LoginContext } from '../Contexts/LoginContext';
 
 function AddArticles() {
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
   const [selectedImage, setImage] = useState(undefined);
   const [Heading,setHeading] = useState("");
@@ -37,7 +40,7 @@ function AddArticles() {
     e.preventDefault();
 
 
-    supabase.storage.from('blog-bucket').upload(`UID${selectedImage.name}`+Math.random(),selectedImage)
+    supabase.storage.from('blog-bucket').upload(`${userID}${selectedImage.name}`+Math.random(),selectedImage)
     .then(value=>{
 
       console.log("SENT!: ",value);
@@ -47,7 +50,7 @@ function AddArticles() {
 
         supabase.from('Blog')
         .insert({
-          Author_ID: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
+          Author_ID: userID,
           Title: Heading,
           MetaTitle: metaTitle,
           Category: category,

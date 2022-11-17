@@ -1,20 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { useEffect } from 'react';
 import { supabase } from "../supabaseClient";
 import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { LoginContext } from '../Contexts/LoginContext';
 
 
-const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
+//const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
 
 
 function ViewArticles() {
+
+    const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+
+
     const [Blogs,setBlogs] = useState([]);
 
 
     const ViewBlogs = async ()=>{
         let { data, error } = await supabase.rpc('viewblogs', {
-          ownerid:ownerid
+          ownerid:userID
         })
       
       if (error) console.error(error)

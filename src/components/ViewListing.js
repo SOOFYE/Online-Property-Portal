@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { supabase } from '../supabaseClient'
 import { Link } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -10,10 +10,14 @@ import ReactTooltip from 'react-tooltip';
 
 import {numberWithCommas} from '../Functions/numberWithCommas';
 
-const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
+import { LoginContext } from '../Contexts/LoginContext';
+
+//const ownerid = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
 
 
 function ViewListing() {
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
     const [listings,setListings] = useState([]);
 
@@ -22,7 +26,7 @@ function ViewListing() {
     const viewListing = async()=>{
 
         const {data,error} = await supabase.rpc('viewlisting', {
-            ownerid
+            ownerid:userID
         })
             console.log(data);
             if(data!==null){
