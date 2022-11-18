@@ -6,7 +6,7 @@ import Notification from "./Notification";
 
 function Navbar({ notificationBadge }) {
 
-  const {loggedIn} = useContext(LoginContext);
+  const {loggedIn,userID} = useContext(LoginContext);
 
 
   return (
@@ -137,7 +137,7 @@ function Navbar({ notificationBadge }) {
         
 
               
-                <span>
+                {(userID!==process.env.REACT_APP_ADMIN_ID)?(<span>
                   <Link
                     to="/MemberPortal"
                     className="block border-b-4 border-transparent p-6 hover:border-red-700"
@@ -159,7 +159,28 @@ function Navbar({ notificationBadge }) {
 
                     <span className="sr-only"> MemberPortal </span>
                   </Link>
-                </span>
+                </span>):(
+                  <Link
+                    to="/AdminPortal"
+                    className="block border-b-4 border-transparent p-6 hover:border-red-700"
+                  >
+                    <svg
+                      className="h-7 w-7 text-gray-800 hover:fill-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+
+                    <span className="sr-only"> AdminPortal </span>
+                  </Link>)}
 
                 <div className="block md:hidden">
                   <button className="rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75">

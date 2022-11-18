@@ -1,10 +1,14 @@
-import React,{ useState } from 'react'
+import React,{ useState,useContext } from 'react'
 import { supabase } from "../supabaseClient";
 import SuccessSpamSent from "./SuccessSpamSent";
 
+import { LoginContext } from '../Contexts/LoginContext';
+
 function SpamForm({showspam,setshowspam,pid}) {
 
-    const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0";
+    //const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0";
+
+    const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
     const [reason,setreason] = useState("");
     const [showsuccess,setsuccess] = useState('')
@@ -14,14 +18,18 @@ function SpamForm({showspam,setshowspam,pid}) {
         setreason(e.target.value);
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
+
+  const val = await supabase.auth.getSession();
 
         supabase.rpc('insertspam', {
         propertyid:pid, 
         reason:reason, 
-        reporter:currentuser
+        reporter:val.data.session.user.id
     }).then((value)=>{
+
+      console.log(value);
 
         if(value.error===null){
             setsuccess(true);

@@ -1,7 +1,14 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { supabase } from '../supabaseClient'
+import { LoginContext } from '../Contexts/LoginContext';
+import {useNavigate} from 'react-router-dom'
 
 function Signup() {
+
+  const navigate = useNavigate();
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+
   const [firstname, setfirstname] = useState(String);
   const [lastname, setlastname] = useState(String);
   const [email, setemail] = useState(String);
@@ -40,10 +47,44 @@ function Signup() {
   const handleaddress = (e) => {
     setaddress(e.target.value);
   };
-  const handlewho = (e) => {
-    setwho(e.target.value);
-  };
 
+  const getSessions = async ()=>{
+    const { data, error } = await supabase.auth.getSession();
+    if(error===null&&data.session!==null){
+      setuserID(data.session.user.id);
+      setuserType("Member");
+      SetloggedIn(true);
+
+      setTimeout(()=>{
+        navigate("/HomePage")
+      },1500)
+      
+    }
+    else{
+      SetloggedIn(false);
+      navigate("/signin");
+    }
+    console.log(data.session.user.id,error);
+  }
+
+  const login = async ()=>{
+
+    const { user, session, error } =  await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    console.log(user,session,error);
+
+    if(error===null){
+      getSessions();
+    }
+    else{
+      console.log(error.message);
+    }
+
+  }
+ 
   const handlesubmit = async (e) => {
   
     SetError("");
@@ -74,6 +115,7 @@ function Signup() {
     const { data } = await supabase.auth.getUser()
 
     if(data==null){
+      SetError("Server Failed to recieve recently signed up user. Try Signing in with current details."); 
       console.log("Failed to recieve DATA")
       return;
     }
@@ -96,31 +138,22 @@ function Signup() {
         last_name:lastname,
         phone_number:phonenum,
         city:city,
-        user_type:who,
         password:password,
         joined_date:d,
         address:address,
-        property_sold:sold}) 
+        }) 
 
         if(error)
           SetError(error.message);
 
-        else
+        else{
           setSuccess("Successully Signed Up")
+          login();
+        }
         
 
     }
-    
-    // console.log(
-    //   firstname,
-    //   lastname,
-    //   email,
-    //   password,
-    //   confirmpassword,
-    //   city,
-    //   phonenum,
-    //   who
-    // );
+
   };
 
   return (
@@ -591,53 +624,6 @@ function Signup() {
                   value={address}
                   onChange={handleaddress}
                 />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3">
-                <h3 className="mb-4 font-semibold text-gray-700 dark:text-white">
-                  I am Signing up as:
-                </h3>
-                <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                  <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600 ">
-                    <div className="flex items-center pl-3">
-                      <input
-                        onChange={handlewho}
-                        id="horizontal-list-radio-license"
-                        type="radio"
-                        value="Member"
-                        name="list-radio"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        required
-
-                      />
-                      <label
-                        for="horizontal-list-radio-license"
-                        className="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Member
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
-                    <div className="flex items-center pl-3">
-                      <input
-                        onChange={handlewho}
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value="Agent"
-                        name="list-radio"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        required
-                      />
-                      <label
-                        for="horizontal-list-radio-id"
-                        className="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Agent
-                      </label>
-                    </div>
-                  </li>
-                </ul>
               </div>
 
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">

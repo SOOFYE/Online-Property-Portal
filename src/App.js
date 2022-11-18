@@ -45,12 +45,12 @@ function App() {
 
   const channel = supabase
   .channel('table-db-changes')
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Notification', filter: `UserFavrted_ID=eq.${currentuser}`, }, (payload) =>{
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Notification', filter: `UserFavrted_ID=eq.${userID}`, }, (payload) =>{
     console.log(payload)
     setnotificationBadge(true);
     getNotifications();
   }
-  ).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'Notification', filter: `UserFavrted_ID=eq.${currentuser}`, }, (payload) =>{
+  ).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'Notification', filter: `UserFavrted_ID=eq.${userID}`, }, (payload) =>{
     console.log(payload)
     //setnotificationBadge(true);
     getNotifications();
@@ -61,7 +61,7 @@ function App() {
   const getNotifications = async ()=>{
 
     let { data, error } = await supabase.rpc('getnotifications', {
-        currentuser:currentuser
+        currentuser:userID
       })
 
       if(data===null || error || data.length===0){

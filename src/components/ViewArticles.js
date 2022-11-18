@@ -11,15 +11,17 @@ import { LoginContext } from '../Contexts/LoginContext';
 
 function ViewArticles() {
 
-    const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+    //const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
 
     const [Blogs,setBlogs] = useState([]);
 
 
     const ViewBlogs = async ()=>{
+
+      const val = await supabase.auth.getSession();
         let { data, error } = await supabase.rpc('viewblogs', {
-          ownerid:userID
+          ownerid:val.data.session.user.id
         })
       
       if (error) console.error(error)

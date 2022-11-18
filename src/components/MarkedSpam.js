@@ -1,9 +1,14 @@
-import React, {useState,useEffect} from 'react'
-import { Link } from "react-router-dom";
+import React, {useState,useEffect,useContext} from 'react'
+import { Link,useNavigate } from "react-router-dom";
 import { supabase } from '../supabaseClient'
+import {LoginContext} from '../Contexts/LoginContext'
 
 function MarkedSpam({setoption3}) {
     const [tablerows,setTableRows] = useState([]);
+
+    const {SetloggedIn,userID} = useContext(LoginContext);
+
+    const navigate = useNavigate();
 
     const getspamProp = async()=>{
 
@@ -26,7 +31,22 @@ function MarkedSpam({setoption3}) {
         getspamProp();
     }
 
+    const checkifAdmin = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+
+      if(data.session.user.id!==process.env.REACT_APP_ADMIN_ID &&error===null){
+        navigate("/HomePage");
+      }
+      if(error){
+        const { error } = await supabase.auth.signOut();
+        SetloggedIn(false);
+        navigate("/signin");
+      }
+    }
+
     useEffect(()=>{
+
+      checkifAdmin();
 
         setoption3(true);
 

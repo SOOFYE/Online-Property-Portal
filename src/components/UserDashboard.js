@@ -10,8 +10,8 @@ function UserDashboard() {
 
   const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
-    const [pendingCount,setpendingCount] = useState();
-    const [ActiveCount,setActiveCount] = useState();
+    const [pendingCount,setpendingCount] = useState(0);
+    const [ActiveCount,setActiveCount] = useState(0);
     const [recentListings,setListings] = useState([]);
     const [Profit,setProfit] = useState(0);
 
@@ -19,45 +19,89 @@ function UserDashboard() {
 
 
     const getpendingstatuscount = async()=>{
-      const {data,error} = await supabase.rpc('GetStatusCount', {
-        ownerid:userID, 
-        statusvalue:"Pending"
-      })
-      setpendingCount(data)
+
+      supabase.auth.getSession().then(async(value)=>{
+        if(value.error===null){
+          console.log(value);
+
+          const {data,error} = await supabase.rpc('getstatuscount', {
+            ownerid:value.data.session.user.id, 
+            stat:"Pending"
+          })
+          console.log(data,error)
+          setpendingCount(data)
+
+        }
+
+      }
+      )
+ 
+      
     }
 
     const getactivestatuscount = async()=>{
-      const {data,error} = await supabase.rpc('GetStatusCount', {
-        ownerid:userID, 
-        statusvalue:"Active"
-      })
-      setActiveCount(data)
+      supabase.auth.getSession().then(async(value)=>{
+        if(value.error===null){
+          console.log(value);
+
+          const {data,error} = await supabase.rpc('getstatuscount', {
+            ownerid:value.data.session.user.id,  
+            stat:"Active"
+          })
+          console.log(data,error)
+          setActiveCount(data)
+
+        }
+
+      }
+      )
+
     }
 
     const getrecentlisting = async()=>{
-      const {data,error} = await supabase.rpc('getrecentlistings', {
-        ownerid:userID
+
+      supabase.auth.getSession().then(async(value)=>{
+        if(value.error===null){
+
+          const {data,error} = await supabase.rpc('getrecentlistings', {
+            ownerid:value.data.session.user.id
+          })
+          console.log(data,error);
+          setListings(data)
+
+        }
       })
-      console.log(data);
-      setListings(data)
+      
 
     }
 
     const getsoldprice = async()=>{
-      let { data, error } = await supabase.rpc('getsoldpropertyprice', {
-         ownerid:userID
-      })
 
-      console.log(data,error);
-      if(data!==null){
-        setProfit(numberWithCommas(data));
+      supabase.auth.getSession().then(async(value)=>{
+        if(value.error===null){
+
+          let { data, error } = await supabase.rpc('getsoldpropertyprice', {
+            ownerid:value.data.session.user.id
+         })
+   
+         console.log(data,error);
+         if(data!==null){
+           setProfit(numberWithCommas(data));
+         }
+         else{
+           setProfit(0);
+         }
+
+
+        }
       }
-      else{
-        setProfit(0);
-      }
+      )
+      
     }
 
   useEffect(()=>{
+console.log(userID.toString())
+    setListings([])
 
       getpendingstatuscount();
       getactivestatuscount();
@@ -106,7 +150,7 @@ function UserDashboard() {
   
             <ReactTooltip />
             <dd data-tip="Profit from all your 'SOLD' Properties" className="text-4xl font-extrabold text-gray-800 md:text-5xl">
-              ${Profit}
+              <p class='inline text-sm'>PKR</p> {Profit}
             </dd>
           </div>
   
@@ -183,7 +227,7 @@ function UserDashboard() {
 
     <tbody className="divide-y divide-gray-200">
 
-    {recentListings.map((value,index)=>{
+    {(recentListings!==null && recentListings.length!==0 )?(recentListings.map((value,index)=>{
       return(
         <tr key={index}>
         <td className="whitespace-nowrap w-10 px-2 py-2 font-medium text-gray-900">{value.propertyid}</td>
@@ -199,7 +243,7 @@ function UserDashboard() {
         </td>
         </tr>
       )
-    })}
+    })):(<>No unsold listings at the moment!</>)}
       
     </tbody>
   </table>

@@ -25,10 +25,12 @@ function ViewListing() {
 
     const viewListing = async()=>{
 
+      const value = await supabase.auth.getSession();
+
         const {data,error} = await supabase.rpc('viewlisting', {
-            ownerid:userID
+            ownerid:value.data.session.user.id
         })
-            console.log(data);
+            console.log(data,error);
             if(data!==null){
                 setListings(data);
             }
@@ -95,23 +97,13 @@ function ViewListing() {
 
     useEffect(()=>{
 
+      setListings([]);
+
         viewListing();
-
-        // supabase.rpc('viewlisting', {
-        //     ownerid
-        // }).then(value=>{
-        //     console.log(value);
-        //     if(value.data!=null)
-        //     setListings(value.data);
-        //     else{
-        //         setListings("No Listings!")
-        //     }})
-
-
 
     },[])
 
- return (listings[0]!==undefined)?(
+ return (listings!==undefined && listings!==null)?(
     <div>
     <p className="text-6xl font-bold mx-10 my-3 inline">Your Listings</p>
     <button onClick={()=>{setOptions(!showOptions)}}
@@ -128,7 +120,7 @@ function ViewListing() {
     {listings.map((value,index)=>{
         let location = value.sublocaly1.concat(" ",value.sublocaly2.concat(" ",value.neighbourhoodd))
         return(
-            <div className="relative">
+            <div className="relative" key={value.propertyid}>
             
 
             {(showOptions)?(

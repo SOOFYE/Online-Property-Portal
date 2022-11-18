@@ -1,11 +1,15 @@
-import React, {useEffect,useState} from 'react'
+import React, {useEffect,useState,useContext} from 'react'
 import { supabase } from "../supabaseClient";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import {LoginContext} from '../Contexts/LoginContext'
 
 function SpamReports({setoption2}) {
 
     const [report,setReport] = useState([]);
+
+    const {SetloggedIn,userID} = useContext(LoginContext);
+
+    const navigate = useNavigate();
 
     const updateSpamStatus = async(spamid,pid,action) =>{
 
@@ -35,8 +39,24 @@ function SpamReports({setoption2}) {
         setReport(data);         
     }
 
+    
+    const checkifAdmin = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+
+      if(data.session.user.id!==process.env.REACT_APP_ADMIN_ID &&error===null){
+        navigate("/HomePage");
+      }
+      if(error){
+        const { error } = await supabase.auth.signOut();
+        SetloggedIn(false);
+        navigate("/signin");
+      }
+    }
+
 
     useEffect(()=>{
+
+      checkifAdmin();
 
         setoption2(true);
 

@@ -31,15 +31,16 @@ function Sidebar() {
 
       if(error===null&&data.session!==null){
 
-      if(data.session.user.id!=='47a6cf34-4c31-4209-8c7a-b58f554a9039' && loggedIn===true && data.session.user.id === userID  )
+      if(data.session.user.id!==process.env.REACT_APP_ADMIN_ID && loggedIn===true && data.session.user.id === userID  )
          navigate("/MemberPortal/");
 
-      else if(data.session.user.id==='47a6cf34-4c31-4209-8c7a-b58f554a9039' && loggedIn===true && data.session.user.id === userID)
+      else if(data.session.user.id===process.env.REACT_APP_ADMIN_ID && loggedIn===true && data.session.user.id === userID)
       navigate("/AdminPortal/");
 
     }
 
     else {
+      SetloggedIn(false); 
       navigate("/signin");
    }
 

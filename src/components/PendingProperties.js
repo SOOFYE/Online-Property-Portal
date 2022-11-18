@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from '../supabaseClient'
+import {LoginContext} from '../Contexts/LoginContext'
 
 function PendingProperties({setoption1}) {
+
+  const {SetloggedIn,userID} = useContext(LoginContext);
+
+  const navigate = useNavigate();
 
     const [tablerows,setTableRows] = useState([]);
 
@@ -23,7 +28,22 @@ function PendingProperties({setoption1}) {
         getpendingprop();
     }
 
+    const checkifAdmin = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+
+      if(data.session.user.id!==process.env.REACT_APP_ADMIN_ID &&error===null){
+        navigate("/HomePage");
+      }
+      if(error){
+        const { error } = await supabase.auth.signOut();
+        SetloggedIn(false);
+        navigate("/signin");
+      }
+    }
+
     useEffect(()=>{
+
+      checkifAdmin();
 
         setoption1(true);
 

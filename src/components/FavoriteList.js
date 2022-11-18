@@ -11,7 +11,7 @@ import ReactTooltip from 'react-tooltip';
 import {numberWithCommas} from '../Functions/numberWithCommas';
 
 
-const currentUser = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
+//const currentUser = '2e0ef298-f57d-4223-b1c7-14200f2414e0';
 
 function FavoriteList() {
     const [listings,setListings] = useState([]);
@@ -20,8 +20,10 @@ function FavoriteList() {
 
     const viewListing = async()=>{
 
+        const val = await supabase.auth.getSession();
+
         let { data, error } = await supabase.rpc('viewfavorites', {
-          useriid:currentUser
+          useriid:val.data.session.user.id
         })
       
       if (error) console.error(error)

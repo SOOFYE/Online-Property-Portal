@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { supabase } from "../supabaseClient";
 import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import PhonePopup from "./PhonePopup";
@@ -10,6 +10,7 @@ import ReactTooltip from 'react-tooltip';
 import {numberWithCommas} from '../Functions/numberWithCommas';
 import emailjs from '@emailjs/browser';
 import axios from "axios"
+import { LoginContext } from '../Contexts/LoginContext';
 
 const AnyReactComponent = ({ text }) => <div>
 <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-5 h-5">
@@ -20,7 +21,7 @@ const AnyReactComponent = ({ text }) => <div>
 
 function SingleListing() {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   
 
@@ -28,6 +29,10 @@ function SingleListing() {
 
   const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0" //we will have this when user logges in
   //const currentuser = "47a6cf34-4c31-4209-8c7a-b58f554a9039" //adimin id
+
+
+  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+
   const [listing, setListing] = useState([]);
 
   const [fname,setfname] = useState("");
@@ -74,9 +79,12 @@ const AddFavorites = async (pid)=>{
     }
 
     else{
+
+      const value = await supabase.auth.getSession();
+
       let { data, error } = await supabase.rpc('insertfavorites', {
         propertyid:pid, 
-        user_id:currentuser
+        user_id:value.data.session.user.id
       })
 
       console.log(data,error);
@@ -91,10 +99,12 @@ const AddFavorites = async (pid)=>{
 
 const RemoveFavorites = async (pid)=>{
 
+  const value = await supabase.auth.getSession();
+
   let { data, error } = await supabase
   .rpc('removefavorites', {
     propertyid:pid, 
-    userid:currentuser
+    userid:value.data.session.user.id
   })
 
   if(!error){
@@ -107,12 +117,15 @@ const RemoveFavorites = async (pid)=>{
 
 const checkifFavorite = async()=>{
 
+  const value = await supabase.auth.getSession();
+
   let { data, error } = await supabase
   .rpc('checkiffavorite', {
     propertyid:propertyid, 
-    userid:currentuser
+    userid:value.data.session.user.id
   })
 
+  console.log("CHECKFAVORITE!")
   console.log(data,error)
 
   if(!error){
@@ -175,6 +188,8 @@ const handleSubmit = (e)=>{
 
 
   useEffect(() => {
+
+    console.log(userID)
     //if lisiting blocked, or pending, or rejected, then redirect user to error page
     checkifFavorite();
 
@@ -209,17 +224,23 @@ const handleSubmit = (e)=>{
         //console.log(nearbyplaces);
       });
 
-      supabase.rpc('getloggedinuser', {
-        currentuser
-      }).then(value=>{
-        console.log(value);
-        setfname(value.data[0].userfname);
-        setlname(value.data[0].userlname);
-        setEmail(value.data[0].useremail);
-        let fullname = fname.concat(" ",lname)
-        setfullname(fullname);
+      supabase.auth.getSession().then((value)=>{
+
+        supabase.rpc('getloggedinuser', {
+          currentuser:value.data.session.user.id
+        }).then(value=>{
+          console.log(value);
+          setfname(value.data[0].userfname);
+          setlname(value.data[0].userlname);
+          setEmail(value.data[0].useremail);
+          let fullname = fname.concat(" ",lname)
+          setfullname(fullname);
+  
+        })
 
       })
+
+      
 
       //alert();
 
@@ -227,7 +248,7 @@ const handleSubmit = (e)=>{
 
   }, []);
 
-  return((listing[0] !== undefined && listing[0].propertystatus==='Active')||(listing[0] !== undefined && currentuser===listing[0].ownerid)||(listing[0] !== undefined && currentuser===process.env.REACT_APP_ADMIN_ID))?(
+  return((listing[0] !== undefined && listing[0].propertystatus==='Active')||(listing[0] !== undefined && userID===listing[0].ownerid)||(listing[0] !== undefined && userID===process.env.REACT_APP_ADMIN_ID))?(
 
     
     
@@ -313,7 +334,7 @@ const handleSubmit = (e)=>{
                 {listing[0].beds}
               </p>
 
-              {(currentuser!==listing[0].ownerid && JSON.stringify(currentuser)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID))?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
+              {(userID!==listing[0].ownerid && JSON.stringify(userID)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID))?(<article class="rounded-lg border border-gray-100 p-4 shadow-sm transition hover:shadow-lg sm:p-6">
               <span class="inline-block rounded bg-gray-600 p-2 text-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -376,6 +397,7 @@ const handleSubmit = (e)=>{
                       type="text"
                       id="UserEmail"
                       value = {fulllname}
+                      onChange={(e)=>{setfullname(e.target.value)}}
                       placeholder="Anthony Raymens"
                       className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                       required
@@ -454,7 +476,7 @@ const handleSubmit = (e)=>{
                 <p class="mt-2 text-sm leading-relaxed text-gray-500 line-clamp-3">
                  Please avoid any spam emails. The Owner of this property will shortly be in touch with you. Until then browse more!
                 </p>
-              </article>):(JSON.stringify(currentuser)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID) && currentuser===listing[0].ownerid)?(<div className="my-12">
+              </article>):(JSON.stringify(userID)!==JSON.stringify(process.env.REACT_APP_ADMIN_ID) && userID===listing[0].ownerid)?(<div className="my-12">
               <Link to='/MemberPortal/ViewListing'
   className="flex items-center justify-center rounded-xl border-4 border-black bg-gray-200 px-8 py-4 font-bold shadow-[6px_6px_0_0_#000] transition hover:shadow-none focus:outline-none focus:ring active:bg-pink-50"
   

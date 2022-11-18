@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import PendingProperties from "./PendingProperties";
-import { BrowserRouter,Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter,Routes, Route, Link,useNavigate } from "react-router-dom";
 import SpamReports from "./SpamReports";
 import MarkedSpam from "./MarkedSpam";
+import { supabase } from '../supabaseClient'
+import {LoginContext} from '../Contexts/LoginContext'
 function AdminSideBar() {
 
-    const currentuser = '47a6cf34-4c31-4209-8c7a-b58f554a9039' //admin id
+    //const currentuser = '47a6cf34-4c31-4209-8c7a-b58f554a9039' //admin id
+
+    const {SetloggedIn,userID} = useContext(LoginContext);
+
+    const navigate = useNavigate();
     
     const [option1,setoption1] = useState(false);
     const [option2,setoption2] = useState(false);
@@ -31,11 +37,27 @@ function AdminSideBar() {
         setoption1(false);
     }
 
-    useEffect(()=>{
-        console.log(process.env.ADMIN_ID)
-    })
 
-  return(JSON.stringify(currentuser)===JSON.stringify(process.env.REACT_APP_ADMIN_ID))?(
+    const checkifAdmin = async()=>{
+      const { data, error } = await supabase.auth.getSession();
+
+      if(data.session.user.id!==process.env.REACT_APP_ADMIN_ID &&error===null){
+        navigate("/HomePage");
+      }
+      if(error){
+        const { error } = await supabase.auth.signOut();
+        SetloggedIn(false);
+        navigate("/signin");
+      }
+    }
+
+    useEffect(()=>{
+        console.log(process.env.REACT_APP_ADMIN_ID);
+
+        checkifAdmin();
+    },[])
+
+  return(userID===process.env.REACT_APP_ADMIN_ID)?(
     <div>
     <ul class="flex border-b border-gray-100">
       <li class="flex-1">
@@ -98,7 +120,7 @@ function AdminSideBar() {
     </Routes>
 </div>
     
-  ):(<div class="grid h-screen place-content-center bg-white">
+  ):(  <div class="grid h-screen place-content-center bg-white">
   <div class="text-center">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -137,9 +159,26 @@ function AdminSideBar() {
       Uh-oh!
     </h1>
 
-    <p class="mt-4 text-gray-500">You are not authorized to view this content</p>
+    <p class="mt-4 text-gray-500">Unauthorized!</p>
+
+    <Link to="/homepage"
+  className=" my-10 group relative inline-block overflow-hidden border border-indigo-600 px-8 py-3 focus:outline-none focus:ring"
+  
+>
+  <span
+    class="absolute inset-y-0 right-0 w-[2px] bg-indigo-600 transition-all group-hover:w-full group-active:bg-indigo-500"
+  ></span>
+
+  <span
+    class="relative text-sm font-medium text-indigo-600 transition-colors group-hover:text-white"
+  >
+    Go back To Home Page
+  </span>
+</Link>
+
   </div>
-</div>);
+</div>
+  )
 }
 
 export default AdminSideBar;

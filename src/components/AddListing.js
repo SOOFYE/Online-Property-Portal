@@ -127,12 +127,17 @@ function AddListing() {
       console.log("Sent!: ",value.data.path);
       setimagePath(value.data.path);
 
-      Getimageurl(value.data.path).then((value)=>{
+      Getimageurl(value.data.path).then((valueurl)=>{
+
         console.log(value);
+
+    supabase.auth.getSession().then((value)=>{
+
+    
         
         supabase.from('properties')
         .insert({
-          Owner_uuid: userID,
+          Owner_uuid: value.data.session.user.id,
           Purpose: purpose,
           PropertyType: properyTypeF,
           City: City,
@@ -144,7 +149,7 @@ function AddListing() {
           Price: price,
           PropertyTitle: propertyTitle,
           Description: description,
-          ImagePath: value,
+          ImagePath: valueurl,
           Status: 'Pending',
           neighbourhood: neighbourhood,
           sublocal1: sublocality_level_1,
@@ -158,7 +163,7 @@ function AddListing() {
           navigate("/MemberPortal/ViewListing")
 
           })
-        .catch(error=>console.log(error));
+        })
       })
 
       //if value.status error condition!

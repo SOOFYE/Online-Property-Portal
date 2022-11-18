@@ -1,8 +1,11 @@
 import React, { useState, useContext } from "react";
 import { supabase } from "../supabaseClient";
 import { LoginContext } from '../Contexts/LoginContext';
+import { useNavigate } from 'react-router-dom'
 
 function AddArticles() {
+
+  const navigate = useNavigate();
 
   const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
 
@@ -36,11 +39,13 @@ function AddArticles() {
     })
   }
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = async (e)=>{
     e.preventDefault();
 
+    const val = await supabase.auth.getSession();
 
-    supabase.storage.from('blog-bucket').upload(`${userID}${selectedImage.name}`+Math.random(),selectedImage)
+
+    supabase.storage.from('blog-bucket').upload(`UUID${selectedImage.name}`+Math.random(),selectedImage)
     .then(value=>{
 
       console.log("SENT!: ",value);
@@ -50,13 +55,14 @@ function AddArticles() {
 
         supabase.from('Blog')
         .insert({
-          Author_ID: userID,
+          Author_ID: val.data.session.user.id,
           Title: Heading,
           MetaTitle: metaTitle,
           Category: category,
           Content: content,
           ImageUrl: value,
         }).then((value)=>{
+          navigate('/MemberPortal/ViewArticles')
           console.log("DATA SAVED",value);
         })
 

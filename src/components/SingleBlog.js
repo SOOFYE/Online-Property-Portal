@@ -37,19 +37,25 @@ function SingleBlog() {
     }
 
     const submitComment = async()=>{
+        const val = await supabase.auth.getSession();
+
+        console.log(val)
+
         supabase.from('BlogComments')
         .insert({
           BlogID: blogid,
-          UserID: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
+          UserID: val.data.session.user.id,
           Comment: Comm
         }).then((value)=>{console.log("commented PosteD: ",value);getBlogcomments();setcomm("")})
     }
 
     const submitReply = async()=>{
+        const val = await supabase.auth.getSession();
+        
         supabase.from('BlogCommentReply')
         .insert({
           CommentID: CommentIDforReply,
-          UserID: '2e0ef298-f57d-4223-b1c7-14200f2414e0',
+          UserID: val.data.session.user.id,
           Comment: Comm
         }).then((value)=>{console.log("Reply PosteD: ",value);getBlogReplies();setcomm("");setPostComment(true)})
     }
