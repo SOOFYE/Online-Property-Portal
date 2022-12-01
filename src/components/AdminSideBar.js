@@ -57,8 +57,28 @@ function AdminSideBar() {
         checkifAdmin();
     },[])
 
+
+    const signOut = async()=>{
+      const { error } = supabase.auth.signOut();
+
+      if(!error){
+        SetloggedIn(false);
+        navigate("/signin");
+      }
+    }
+
   return(userID===process.env.REACT_APP_ADMIN_ID)?(
     <div>
+    <button
+  class="inline-block rounded-full bg-gradient-to-r from-rose-500 via-red-500 to-red-500 p-[2px] hover:text-white focus:outline-none focus:ring active:text-opacity-75"
+ onClick={()=>signOut()}
+>
+  <span
+    class="block rounded-full bg-white px-8 py-3 text-sm font-medium hover:bg-transparent"
+  >
+    Signout
+  </span>
+</button>
     <ul class="flex border-b border-gray-100">
       <li class="flex-1">
         <Link onClick={handleSelection1} to="./PendingProperties" class="relative block p-4" href="">

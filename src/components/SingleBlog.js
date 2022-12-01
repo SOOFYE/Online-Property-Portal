@@ -1,12 +1,14 @@
 import React from 'react'
-import { useRef } from 'react';
+import { useRef,useContext } from 'react';
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-
+import { LoginContext } from "../Contexts/LoginContext";
 
 function SingleBlog() {
+
+    const {loggedIn} = useContext(LoginContext);
 
     let {blogid} = useParams();
 
@@ -147,7 +149,8 @@ function SingleBlog() {
               <div class="flex justify-between items-center mb-6">
                   <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussion</h2>
               </div>
-              <form class="mb-6" onSubmit={handleSubmit}>
+
+              {(loggedIn)?(<form class="mb-6" onSubmit={handleSubmit}>
                   <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                       <label for="comment" class="sr-only">Your comment</label>
                       <textarea ref={ref} id="comment" rows="6" value={Comm} onChange={handeleComment}
@@ -165,7 +168,12 @@ function SingleBlog() {
                                           class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
                                               Cancel
                                           </button></>)}
-              </form>
+              </form>):(                  <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                      <label for="comment" class="sr-only">Your comment</label>
+                      <textarea disabled ref={ref} id="comment" rows="6" value={Comm} onChange={handeleComment}
+                          class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                          placeholder="Please Signup/Login To comment......"></textarea>
+                  </div>)}
               <div style={{"overflow-y":"scroll", "height":"750px"}}>
               {(blogsComments.length!==0 &&blogsComments!==null && blogsComments!==undefined )?(blogsComments.map((value)=>
               <div>

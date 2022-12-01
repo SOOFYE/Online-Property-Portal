@@ -501,7 +501,7 @@ const handleSubmit = (e)=>{
   </span>
 
   <span class="text-sm font-medium transition-all group-hover:mr-4">
-    Approve
+    Activate
   </span>
 </button>
 <button onClick={()=>updateStatus(listing[0].propertyuid,"Reject")} type="button"
@@ -518,7 +518,7 @@ const handleSubmit = (e)=>{
   </span>
 
   <span class="text-sm font-medium transition-all group-hover:mr-4">
-    Reject
+    De-Activate
   </span>
 </button></div>)}
             </div>

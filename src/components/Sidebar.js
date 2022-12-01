@@ -8,6 +8,8 @@ import ViewArticles from './ViewArticles';
 import { supabase } from '../supabaseClient'
 import { LoginContext } from '../Contexts/LoginContext';
 import { useEffect } from 'react';
+import WriteOwnQs from './WriteOwnQs';
+
 
 function Sidebar() {
 
@@ -89,13 +91,13 @@ function Sidebar() {
                <span className="inline-flex justify-center items-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
             </a>
          </li> */}
-         <li>
+         {/* <li>
             <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
                <span className="flex-1 ml-3 whitespace-nowrap">Inbox</span>
                <span className="inline-flex justify-center items-center p-3 ml-3 w-3 h-3 text-sm font-medium text-blue-600 bg-blue-200 rounded-full dark:bg-blue-900 dark:text-blue-200">3</span>
             </a>
-         </li>
+         </li> */}
 
          <li>
             <button onClick={handleDropdown2} type="button" className="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
@@ -121,7 +123,7 @@ function Sidebar() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
 </svg>
-               <span className="flex-1 ml-3 whitespace-nowrap">Help</span>
+               <Link to="./PostQuestion"><span className="flex-1 ml-3 whitespace-nowrap">Ask Someone</span></Link>
             </a>
          </li>
          <li>
@@ -148,6 +150,7 @@ function Sidebar() {
     <Route path="/ViewListing" element={<ViewListing/>}></Route>
     <Route path="/AddArticles" element={<AddArticles/>}></Route>
     <Route path="/ViewArticles" element={<ViewArticles/>}></Route>
+    <Route path="/PostQuestion" element={<WriteOwnQs/>}></Route>
     </Routes>
  </div>
   )

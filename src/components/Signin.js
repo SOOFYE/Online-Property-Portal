@@ -129,13 +129,13 @@ function Signin() {
               placeholder="Enter password"
               required
             />
-            {(errorMessage)?(<div role="alert" className=" col-span-6 mt-8 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-red-500 bg-red-50 p-4">
+            {(errorMessage)?(<div role="alert" className=" mt-3 col-span-6 mt-8 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-red-500 bg-red-50 p-4">
                   <strong className="block font-medium text-red-700"> Something went wrong: </strong>
 
                     <p className="mt-1 text-sm text-red-700">
                     {errorMessage}
                     </p>
-                  </div>):(successMessage)?(<div role="alert" className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-green-500 bg-green-50 p-4">
+                  </div>):(successMessage)?(<div role="alert" className=" mt-3 col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-green-500 bg-green-50 p-4">
               <strong className="block font-medium text-green-700"> Success! </strong>
 
                 <p className="mt-1 text-sm text-green-700">

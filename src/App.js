@@ -24,6 +24,7 @@ import FilteredResults from './components/FilteredResults';
 
 
 import  {LoginContext} from "./Contexts/LoginContext";
+import BrowseForum from './components/BrowseForum';
 
 
 
@@ -91,6 +92,7 @@ const MarkNotificationASRead = async(notid) =>{
 }
 
 const confirmSessionApp = async()=>{
+
   const { data, error } = await supabase.auth.getSession();
   console.log(data,error);
   if(error===null&&data.session!==null){
@@ -109,12 +111,13 @@ const confirmSessionApp = async()=>{
     setuserID(null);
     setuserType("");
     SetloggedIn(false);
+    navigate("/HomePage")
   }
   //console.log(data.session.user.id,error);
 }
 
-useEffect(()=>{
-
+useEffect(async()=>{
+  
   confirmSessionApp();
 
 },[])
@@ -138,7 +141,8 @@ useEffect(()=>{
       <Route path="/AreaUnitCoverter" element={<UnitConverter/>}></Route>
       <Route path="/MortageCalculator" element={<MortageCalculator/>}></Route>
       <Route path="/ViewFavoriteList" element={<FavoriteList/>}></Route>
-      <Route path="/FilteredResults" element={<FilteredResults filteredResults={filteredResults}/>}></Route>   
+      <Route path="/FilteredResults" element={<FilteredResults filteredResults={filteredResults}/>}></Route>
+      <Route path="/BrowseForum" element={<BrowseForum/>}></Route>   
     </Routes>
 
   </LoginContext.Provider>

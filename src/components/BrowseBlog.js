@@ -7,6 +7,8 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 
 function BrowseBlog() {
+  
+ 
 
     const [Blogs,setBlogs] = useState([]);
     const [Search,setSearch] = useState("");
@@ -28,13 +30,15 @@ function BrowseBlog() {
             search:Search
         })
 
+        console.log(data);
+
             if (error) console.error(error)
             else {console.log(data);
               setBlogs(data)}
     }
 
     useEffect(()=>{
-
+      setBlogs([]);
         browseBlogs();
     },[])
     
