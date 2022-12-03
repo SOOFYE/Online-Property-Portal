@@ -2,13 +2,14 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { supabase } from "../supabaseClient";
 import SingleForum from './SingleForum';
+import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 
 function BrowseForum() {
 
 
     const [forums,setforums] = useState([]);
     const [Search,setSearch] = useState("");
-
+    const [anscount,setascount] = useState("")
 
 
     const handleSearch = (e)=>{
@@ -29,10 +30,21 @@ function BrowseForum() {
 
     }  
 
+const getreplycount = async(fid)=>{
+  let { data, error } = await supabase.rpc('getreplycount', {
+    forumid:fid
+  })
 
+if (error) console.error(error)
+else {console.log(data);setascount(data);return data}
+
+
+}
 
     useEffect(()=>{
          getforums();
+  
+
     },[])
 
 
@@ -62,6 +74,10 @@ function BrowseForum() {
 {(forums.map((value,index)=>{
 
     let date = new Date(value.date);
+    let count = getreplycount(value.forumid);
+    let c = 0
+    c = count.then((Val)=>{return Val});
+    console.log(c,"NIGA")
 
     return(<article key={value.forumid}
   class="mt-5 rounded-xl bg-gradient-to-r from-red-300 via-blue-500 to-rose-600 p-0.5 shadow-xl transition hover:shadow-sm"
@@ -71,11 +87,11 @@ function BrowseForum() {
     {date.getDate()}{" "}{date.toLocaleString('default', { month: 'short' })}{" "}{date.getFullYear()}
     </p>
 
-    <a href="#">
+    <Link to={"/SingleForum/"+value.forumid}>
       <h3 class="mt-0.5 text-lg font-medium text-gray-900">
         {value.question}
       </h3>
-    </a>
+    </Link>
 
      <div class="mt-4 flex flex-wrap gap-1">
       <span
@@ -103,8 +119,8 @@ function BrowseForum() {
   <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
 </svg>
 
- <p class='ml-1 inline font-bold'>0</p>
-      </span>
+ <p class='ml-1 inline font-bold'></p>
+  </span>
 
 
 
@@ -114,7 +130,6 @@ function BrowseForum() {
 
 }))}
 
-<SingleForum/>
 </div>    
 
 

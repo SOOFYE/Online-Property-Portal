@@ -25,6 +25,7 @@ import FilteredResults from './components/FilteredResults';
 
 import  {LoginContext} from "./Contexts/LoginContext";
 import BrowseForum from './components/BrowseForum';
+import SingleForum from './components/SingleForum';
 
 
 
@@ -142,7 +143,8 @@ useEffect(async()=>{
       <Route path="/MortageCalculator" element={<MortageCalculator/>}></Route>
       <Route path="/ViewFavoriteList" element={<FavoriteList/>}></Route>
       <Route path="/FilteredResults" element={<FilteredResults filteredResults={filteredResults}/>}></Route>
-      <Route path="/BrowseForum" element={<BrowseForum/>}></Route>   
+      <Route path="/BrowseForum" element={<BrowseForum/>}></Route> 
+      <Route path="/SingleForum/:forumid" element={<SingleForum/>}></Route>  
     </Routes>
 
   </LoginContext.Provider>
