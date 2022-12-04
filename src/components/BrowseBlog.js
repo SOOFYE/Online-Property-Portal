@@ -13,6 +13,7 @@ function BrowseBlog() {
     const [Blogs,setBlogs] = useState([]);
     const [Search,setSearch] = useState("");
     const [category,setCategory] = useState("All");
+    const [loading,setLoading] = useState("Loading....");
 
     const handleCategory = (e)=>{
         setCategory(e.target.value);
@@ -38,6 +39,14 @@ function BrowseBlog() {
     }
 
     useEffect(()=>{
+
+
+      setLoading("Loading.....")
+
+      setTimeout(()=>{
+        setLoading("No Blogs Found")
+      },3000)
+
       setBlogs([]);
         browseBlogs();
     },[])
@@ -80,10 +89,11 @@ function BrowseBlog() {
 
 
     </div>
-
+<div className='overflow-y-scroll h-[800px]'>
 {Blogs.map((value=>{
 
   let date = new Date(value.daate);
+
 
   return(<article class="flex bg-white transition hover:shadow-xl mt-5">
   
@@ -132,14 +142,14 @@ function BrowseBlog() {
       </Link>
     </div>
   </div>
-</article>)}))}
+</article>)}))}</div>
 
 
 
 
 
 </div>
-  ):(<div>No Blogs!</div>)
+  ):(<div className='text-4xl font-md mt-4 mr-4'>{loading}</div>)
 }
 
 export default BrowseBlog

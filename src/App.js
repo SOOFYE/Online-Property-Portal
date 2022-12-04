@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../src/supabaseClient'
 
 import './App.css';
-import { BrowserRouter,Routes, Route, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter,Routes, Route,Link,Navigate,useNavigate } from "react-router-dom";
 import Navbar from './components/Navbar';
 import Signin from './components/Signin';
 import Signup from './components/Signup';
@@ -128,6 +128,7 @@ useEffect(async()=>{
    
     <Navbar notificationBadge={notificationBadge}/>
     <Routes>
+    <Route path="/" element={<Navigate to="/HomePage" />}></Route>
       <Route path="/signin" element={<Signin/>}></Route>
       <Route path="/register" element={<Signup/>}></Route>
       <Route path="/MemberPortal/*" element={<Sidebar/>}></Route>

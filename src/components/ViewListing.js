@@ -23,6 +23,8 @@ function ViewListing() {
 
     const[showOptions,setOptions] = useState(false);
 
+    const [loading,setLoading] = useState("Loading....");
+
     const viewListing = async()=>{
 
       const value = await supabase.auth.getSession();
@@ -96,6 +98,13 @@ function ViewListing() {
       };
 
     useEffect(()=>{
+
+      setLoading("Loading.....")
+
+      setTimeout(()=>{
+        setLoading("No Properties added ")
+      },3000)
+
 
       setListings([]);
 
@@ -190,7 +199,7 @@ function ViewListing() {
     
   </section>
   </div>
-  ):(<div>No listings currently added!</div>)
+  ):(<div className='text-4xl font-md mt-4 mr-4'>{loading}</div>)
 }
 
 export default ViewListing

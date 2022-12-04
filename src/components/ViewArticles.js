@@ -15,6 +15,7 @@ function ViewArticles() {
 
 
     const [Blogs,setBlogs] = useState([]);
+    const [loading,setLoading] = useState("Loading....");
 
 
     const ViewBlogs = async ()=>{
@@ -43,8 +44,14 @@ else {console.log(data);
 
     useEffect(()=>{
 
+      setLoading("Loading.....")
+
+      setTimeout(()=>{
+        setLoading("No Articles added")
+      },3000)
+
         ViewBlogs();
-        console.log("BIDA?")
+
     },[])
     
 
@@ -119,7 +126,7 @@ else {console.log(data);
 
 
 </div>
-  ):(<div>No Blogs!</div>)
+  ):(<div className='text-4xl font-md mt-4 mr-4'>{loading}</div>)
 }
 
 export default ViewArticles

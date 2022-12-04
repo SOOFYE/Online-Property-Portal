@@ -206,7 +206,7 @@ function SingleBlog() {
                                   <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white"><img
                                       class="mr-2 w-6 h-6 rounded-full"
                                       src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                      alt="Jese Leos" />{value.fname}{" "}{value.lname}</p>
+                                      alt="Jese Leos" />{valuee.fname}{" "}{valuee.lname}</p>
                                   <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-12"
                                       title="February 12th, 2022">{getmyDate(valuee.daate)}</time></p>
                               </div>

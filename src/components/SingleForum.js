@@ -311,14 +311,14 @@ else {console.log(data); setforumdata(data);}
 
               <div class="flex flex-col mr-5">
 
-              <button type='button' onClick={()=>MarkupVote()}><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(upVoted===false)?("w-9 h-9 hover:fill-green-900"):("w-9 h-9 fill-green-900 hover:fill-none")}>
+              <button disabled={!loggedIn} type='button' onClick={()=>MarkupVote()}><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(upVoted===false)?("w-9 h-9 hover:fill-green-900"):("w-9 h-9 fill-green-900 hover:fill-none")}>
                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" />
               </svg></button>
 
               <p className='text-lg text-center font-black'>{forumdata[0].uvotes - forumdata[0].dvotes}</p>
 
 
-              <button type='button' onClick={()=>MarkdownVote()}><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(downVoted===false)?("w-9 h-9 hover:fill-red-900"):("w-9 h-9 fill-red-900 hover:fill-none")}>
+              <button disabled={!loggedIn} type='button' onClick={()=>MarkdownVote()}><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(downVoted===false)?("w-9 h-9 hover:fill-red-900"):("w-9 h-9 fill-red-900 hover:fill-none")}>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384" />
               </svg></button>
 
@@ -346,12 +346,12 @@ else {console.log(data); setforumdata(data);}
               {(!forumdata[0].closed)?(<form onSubmit={postAnswer}class="mb-6">
                   <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                       <label for="comment" class="sr-only">Your comment</label>
-                      <textarea value={comment} onChange={handleComment} id="comment" rows="6"
+                      <textarea disabled={!loggedIn} value={comment} onChange={handleComment} id="comment" rows="6"
                           class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-                          placeholder="Write your answer..." required></textarea>
+                          placeholder={(loggedIn)?("Write your answer..."):("Please Login to Answer.")} required></textarea>
                   </div>
 
-                  <button
+                  <button disabled={!loggedIn}
   class="group relative inline-flex items-center overflow-hidden rounded bg-indigo-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500"
   type='submit'
 >
@@ -391,14 +391,14 @@ else {console.log(data); setforumdata(data);}
 
               <div class="flex flex-col mr-3 mt-5">
 
-              <button onClick={()=>MarkUpVoteComment(value.comid)} type='button' ><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(!userUpvotedComments.find(e => e.cid===value.comid))?("w-6 h-6 hover:fill-green-900"):("w-6 h-6 fill-green-900 hover:fill-none")}>
+              <button disabled={!loggedIn} onClick={()=>MarkUpVoteComment(value.comid)} type='button' ><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(!userUpvotedComments.find(e => e.cid===value.comid))?("w-6 h-6 hover:fill-green-900"):("w-6 h-6 fill-green-900 hover:fill-none")}>
                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" />
               </svg></button>
 
               <p className='text-md text-center font-black'>{value.uvotes-value.dvotes}</p>
 
 
-              <button onClick={()=>MarkDownVoteComment(value.comid)} type='button' ><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(!userDownvotedComments.find(e => e.cid===value.comid))?("w-6 h-6 hover:fill-red-900"):("w-6 h-6 fill-red-900 hover:fill-none")}>
+              <button disabled={!loggedIn} onClick={()=>MarkDownVoteComment(value.comid)} type='button' ><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class={(!userDownvotedComments.find(e => e.cid===value.comid))?("w-6 h-6 hover:fill-red-900"):("w-6 h-6 fill-red-900 hover:fill-none")}>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384" />
               </svg></button>
 
@@ -417,13 +417,13 @@ else {console.log(data); setforumdata(data);}
                       </div>
                   </footer>
                   <p>{value.comment}</p>
-                  <div class="flex items-center mt-4 space-x-4">
+                  {/* <div class="flex items-center mt-4 space-x-4">
                       <button type="button"
                           class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400">
                           <svg aria-hidden="true" class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                           Reply
                       </button>
-                  </div>
+                  </div> */}
                  
               </article>
               

@@ -2,7 +2,11 @@ import React, {useState} from 'react'
 
 import { supabase } from '../supabaseClient'
 
+import { BrowserRouter,Routes, Route, Link, useNavigate } from "react-router-dom";
+
 function WriteOwnQs() {
+
+  const navigate = useNavigate();
 
     const [question,setQuestion] = useState("");
 
@@ -27,8 +31,11 @@ function WriteOwnQs() {
 
         });
 
+
+
         if(error===null){
             console.log("Question saved!",data);
+            navigate("/MemberPortal/MyQuestions")
         }
         else{
             console.log(error);

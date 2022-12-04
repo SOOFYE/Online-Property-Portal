@@ -56,8 +56,8 @@ function BrowseListings() {
             </p>}
           className=" grid grid-cols-3 row-span-5 col-span-10 my-16 gap-5 mx-12 overflow-y-auto"
           endMessage={
-            <p className="text-xl font-bold">
-              <b>Yay! You have seen it all</b>
+            <p className="block text-xl font-bold">
+              <b className='block'>Yay! You have seen it all</b>
             </p>
           }
           >

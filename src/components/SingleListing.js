@@ -184,7 +184,15 @@ const handleSubmit = (e)=>{
 }
 
 
+const increaseview = async()=>{
+  let { data, error } = await supabase
+  .rpc('increaseview', {
+    propid:propertyid
+  })
 
+if (error) console.error(error)
+else console.log(data)
+}
 
 
   useEffect(() => {
@@ -192,6 +200,8 @@ const handleSubmit = (e)=>{
     console.log(userID)
     //if lisiting blocked, or pending, or rejected, then redirect user to error page
     checkifFavorite();
+
+    increaseview();
 
     supabase
       .rpc("getsinglelisting", {
@@ -211,6 +221,7 @@ const handleSubmit = (e)=>{
         console.log(defaultProps)
         setProps(defaultProps)
         console.log(value);
+
 
         // axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${value.data[0].lati}%2C${value.data[0].lngi}&radius=1500&type=restaurant&keyword=${value.data[0].propertycity}&key=AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc`
         // ,{headers: { 
