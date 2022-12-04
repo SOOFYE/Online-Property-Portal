@@ -1,15 +1,16 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { supabase } from "../supabaseClient";
-import SingleForum from './SingleForum';
-import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
+
+import {Link} from "react-router-dom";
 
 function BrowseForum() {
 
 
     const [forums,setforums] = useState([]);
     const [Search,setSearch] = useState("");
-    const [anscount,setascount] = useState("")
+
+   
 
 
     const handleSearch = (e)=>{
@@ -30,20 +31,11 @@ function BrowseForum() {
 
     }  
 
-const getreplycount = async(fid)=>{
-  let { data, error } = await supabase.rpc('getreplycount', {
-    forumid:fid
-  })
 
-if (error) console.error(error)
-else {console.log(data);setascount(data);return data}
-
-
-}
 
     useEffect(()=>{
-         getforums();
-  
+
+          getforums();
 
     },[])
 
@@ -74,10 +66,6 @@ else {console.log(data);setascount(data);return data}
 {(forums.map((value,index)=>{
 
     let date = new Date(value.date);
-    let count = getreplycount(value.forumid);
-    let c = 0
-    c = count.then((Val)=>{return Val});
-    console.log(c,"NIGA")
 
     return(<article key={value.forumid}
   class="mt-5 rounded-xl bg-gradient-to-r from-red-300 via-blue-500 to-rose-600 p-0.5 shadow-xl transition hover:shadow-sm"
@@ -112,29 +100,34 @@ else {console.log(data);setascount(data);return data}
  <p class='inline font-bold'>{value.downvote}</p>
       </span>
 
-      <span
-        class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-rose-600"
-      >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="inline w-5 h-5">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-</svg>
-
- <p class='ml-1 inline font-bold'></p>
-  </span>
-
-
-
+ 
     </div> 
   </div>
 </article>)
-
 }))}
+
 
 </div>    
 
 
 </div>
-  ):(<div>No Forums Yet...</div>)
+  ):(<div className='my-3 mb-4'>
+
+  <div class="flex">
+      <div class="relative w-full ml-3 mr-2">
+          <input value={Search} onChange={handleSearch}  type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-50 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-l-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Look up on any questions you have....." />
+          <button onClick={()=>getforums()} type="button" class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <span class="sr-only">Search</span>
+          </button>
+      </div>
+  </div>
+
+  <div>No forums available</div>
+
+
+
+  </div>)
 }
 
 export default BrowseForum

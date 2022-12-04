@@ -9,6 +9,7 @@ import { supabase } from '../supabaseClient'
 import { LoginContext } from '../Contexts/LoginContext';
 import { useEffect } from 'react';
 import WriteOwnQs from './WriteOwnQs';
+import MyQuestions from './MyQuestions';
 
 
 function Sidebar() {
@@ -119,12 +120,21 @@ function Sidebar() {
             </ul>
          </li>
          <li>
-            <a href="\home" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
 </svg>
                <Link to="./PostQuestion"><span className="flex-1 ml-3 whitespace-nowrap">Ask Someone</span></Link>
-            </a>
+            </button>
+         </li>
+         <li>
+            <button className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+</svg>
+
+               <Link to="./MyQuestions"><span className="flex-1 ml-3 whitespace-nowrap">My Question's</span></Link>
+            </button>
          </li>
          <li>
             <button onClick={()=>signout()} className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -151,6 +161,7 @@ function Sidebar() {
     <Route path="/AddArticles" element={<AddArticles/>}></Route>
     <Route path="/ViewArticles" element={<ViewArticles/>}></Route>
     <Route path="/PostQuestion" element={<WriteOwnQs/>}></Route>
+    <Route path="/MyQuestions" element={<MyQuestions/>}></Route>
     </Routes>
  </div>
   )

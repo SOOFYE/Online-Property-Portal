@@ -10,6 +10,7 @@ import { LoginContext } from "../Contexts/LoginContext";
 
 
 function SingleForum() {
+
     const {loggedIn} = useContext(LoginContext);
 
     const [forumdata,setforumdata] = useState([])
@@ -276,17 +277,11 @@ else {console.log(data); setforumdata(data);}
     useEffect(()=>{
 
         getforum();
-
         CheckifUpVoted();
         CheckifDownVoted();
         getAnswers();
         GetUsersDownvotesonComments(); //get users all downvotes of comments.
         GetUsersUpvotesonComments(); //get users all upvotes of comments.
-
-        setTimeout(()=>{
-            userDownvotedComments.find(e=>console.log(e.cid))
-           console.log(userUpvotedComments)
-        },2000)
 
     },[])
 
@@ -294,7 +289,7 @@ else {console.log(data); setforumdata(data);}
 
 
 
-  return(forumdata!==null && forumdata.length>0)?(
+  return(forumdata!==null && forumdata.length>0 && forumdata!==undefined)?(
 <div>
     <main class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900">
   <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">
@@ -384,7 +379,7 @@ else {console.log(data); setforumdata(data);}
   </span>
 </button>
 
-              </form>):(<div><p className='text-rose-600 text-2xl font-semibold align-center '>This Question is Closed By the User.</p></div>)}
+              </form>):(<div><p className='text-rose-600 text-2xl font-semibold align-center '>This Question is Closed By the Asker.</p></div>)}
 
             {(allAnswers.length>0 && allAnswers!==null && allAnswers!==undefined)?(allAnswers.map((value,index)=>{
 
