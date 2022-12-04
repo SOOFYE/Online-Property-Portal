@@ -179,14 +179,14 @@ function Navbar({ notificationBadge }) {
               <div className="flex items-center gap-4">
                 <div className="sm:flex sm:gap-4">
                   <Link to="/signin">
-                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">
+                    <button class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 border-b-4 border-rose-700 hover:border-rose-500 rounded">
                       Sign in
                     </button>
                   </Link>
 
                   <div className="hidden sm:flex">
                     <Link to="/register">
-                      <button className=" bg-gray-100 text-sm  text-green-600 rounded font-bold py-2 px-4 border-b-4">
+                      <button className=" bg-gray-100 text-sm  text-rose-600 rounded font-bold py-2 px-4 border-b-4">
                         Register
                       </button>
                     </Link>

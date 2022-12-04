@@ -323,7 +323,7 @@ function AddListing() {
           onSubmit={handleSubmit}
           className="mt-6  mb-0 space-y-4 rounded-lg p-8 shadow-2xl"
         >
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium  dark:text-white decoration-gray-500 decoration-wavy">
             Purpose, Property Type And Location
           </p>
 
@@ -500,7 +500,7 @@ function AddListing() {
             </PlacesAutocomplete><span class="mt-3 text-red-900 font-black">{ASmessage}</span>
           </div>
 
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium  dark:text-white decoration-gray-500 decoration-wavy">
             Property Specs And Price
           </p>
 
@@ -602,7 +602,7 @@ function AddListing() {
             
           </div>
 
-          <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
+          <p className="text-xl font-semibold font-medium  dark:text-white decoration-gray-500 decoration-wavy">
             Property Title And Description
           </p>
 
