@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -6,11 +6,11 @@ import PlacesAutocomplete, {
 
 import { ToWords } from "to-words";
 
-import { supabase } from '../supabaseClient'
+import { supabase } from "../supabaseClient";
 
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { LoginContext } from '../Contexts/LoginContext';
+import { LoginContext } from "../Contexts/LoginContext";
 
 const toWords = new ToWords({
   localeCode: "en-IN",
@@ -38,8 +38,8 @@ const searchOptions = {
 };
 
 function AddListing() {
-
-  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+  const { loggedIn, SetloggedIn, userID, userType, setuserID, setuserType } =
+    useContext(LoginContext);
 
   const navigate = useNavigate();
 
@@ -75,10 +75,10 @@ function AddListing() {
   const [properyTypeF, setPropertyTypeF] = useState(String);
   const [City, setCity] = useState(String);
   const [address, setaddress] = useState(""); //actual address we willl use
-  const [landMark,setlandMark] = useState("N/A");
-  const [neighbourhood,setneighbourhood] = useState(" ");
-  const [sublocality_level_1,setsublocality_level_1] = useState(" ");
-  const [sublocality_level_2,setsublocality_level_2] = useState(" ");
+  const [landMark, setlandMark] = useState("N/A");
+  const [neighbourhood, setneighbourhood] = useState(" ");
+  const [sublocality_level_1, setsublocality_level_1] = useState(" ");
+  const [sublocality_level_2, setsublocality_level_2] = useState(" ");
   const [formatedAddress, setFormatAddress] = useState(" "); //result stored if needed
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
@@ -90,90 +90,78 @@ function AddListing() {
   const [propertyTitle, setPropertyTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedImage, setImage] = useState(undefined);
-  const [imagePath,setimagePath] = useState(String);
+  const [imagePath, setimagePath] = useState(String);
 
-  const [bedrooms,setbedrooms] = useState(0);
+  const [bedrooms, setbedrooms] = useState(0);
 
-  const [addresselected,setAS] = useState(false);
-  const [ASmessage,setASmessage] = useState("");
+  const [addresselected, setAS] = useState(false);
+  const [ASmessage, setASmessage] = useState("");
 
+  const Getimageurl = (imagepath) => {
+    return new Promise(function (resolve, reject) {
+      const { data } = supabase.storage
+        .from("properties")
+        .getPublicUrl(imagepath);
+      if (data != null) resolve(data.publicUrl);
+      else reject("Image Path invalid!");
+    });
+  };
 
-    const Getimageurl = (imagepath) =>{
-      return new Promise(function(resolve,reject){
-        const { data } = supabase.storage.from('properties').getPublicUrl(imagepath)
-        if(data!=null)
-        resolve(data.publicUrl);
-        else
-        reject('Image Path invalid!');
-      })
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (addresselected === false) {
+      setASmessage("Please Select an Address from the dropdown!");
+      return;
     }
 
-    const handleSubmit = async (e)=>{
+    //adduseruuid********************************
 
-      e.preventDefault();
+    supabase.storage
+      .from("properties")
+      .upload(`${userID}${selectedImage.name}` + Math.random(), selectedImage)
+      .then((value) => {
+        console.log("Sent!: ", value.data.path);
+        setimagePath(value.data.path);
 
-      if(addresselected===false){
-        setASmessage("Please Select an Address from the dropdown!");
-        return;
-      }
+        Getimageurl(value.data.path).then((valueurl) => {
+          console.log(value);
 
-      //adduseruuid********************************
+          supabase.auth.getSession().then((value) => {
+            supabase
+              .from("properties")
+              .insert({
+                Owner_uuid: value.data.session.user.id,
+                Purpose: purpose,
+                PropertyType: properyTypeF,
+                City: City,
+                Address: address,
+                lat: lat,
+                lng: lng,
+                AreaUnits: areaUnits,
+                OcupancyStatus: Ocupancy,
+                Price: price,
+                PropertyTitle: propertyTitle,
+                Description: description,
+                ImagePath: valueurl,
+                Status: "Pending",
+                neighbourhood: neighbourhood,
+                sublocal1: sublocality_level_1,
+                sublocal2: sublocality_level_2,
+                landmark: landMark,
+                Bedrooms: bedrooms,
+              })
+              .then((value) => {
+                console.log("data saved :", value);
+                navigate("/MemberPortal/ViewListing");
+              });
+          });
+        });
 
-      supabase
-     .storage
-     .from('properties')
-     .upload(`${userID}${selectedImage.name}`+Math.random(), selectedImage)
-     .then(value=>{
-      console.log("Sent!: ",value.data.path);
-      setimagePath(value.data.path);
-
-      Getimageurl(value.data.path).then((valueurl)=>{
-
-        console.log(value);
-
-    supabase.auth.getSession().then((value)=>{
-
-    
-        
-        supabase.from('properties')
-        .insert({
-          Owner_uuid: value.data.session.user.id,
-          Purpose: purpose,
-          PropertyType: properyTypeF,
-          City: City,
-          Address: address,
-          lat: lat,
-          lng: lng,
-          AreaUnits: areaUnits,
-          OcupancyStatus: Ocupancy,
-          Price: price,
-          PropertyTitle: propertyTitle,
-          Description: description,
-          ImagePath: valueurl,
-          Status: 'Pending',
-          neighbourhood: neighbourhood,
-          sublocal1: sublocality_level_1,
-          sublocal2: sublocality_level_2,
-          landmark: landMark,
-          Bedrooms: bedrooms
-  
-        })
-        .then(value=>{
-          console.log("data saved :",value);
-          navigate("/MemberPortal/ViewListing")
-
-          })
-        })
+        //if value.status error condition!
       })
-
-      //if value.status error condition!
-
-     })
-     .catch(error=>console.log(error));
-
-
-    }
-
+      .catch((error) => console.log(error));
+  };
 
   const handlePurpose = (e) => {
     setPurpose(e.target.value);
@@ -213,9 +201,9 @@ function AddListing() {
     //for udating your writing in input box.
   };
 
-  const handlebedrooms = (e)=>{
-    setbedrooms(e.target.value)
-  }
+  const handlebedrooms = (e) => {
+    setbedrooms(e.target.value);
+  };
 
   const handleSelect = (address) => {
     setAS(true);
@@ -224,30 +212,28 @@ function AddListing() {
     console.log(address);
     geocodeByAddress(address)
       .then((results) => {
-        results[0].address_components.map((value)=>{
-          console.log(value)
-          value.types.map((typeval)=>{
-            if(typeval==='neighbourhood'){
+        results[0].address_components.map((value) => {
+          console.log(value);
+          value.types.map((typeval) => {
+            if (typeval === "neighbourhood") {
               return setneighbourhood(value.long_name);
             }
-            if(typeval==='sublocality_level_1'){
+            if (typeval === "sublocality_level_1") {
               return setsublocality_level_1(value.long_name);
             }
-            if(typeval==='setsublocality_level_2'){
+            if (typeval === "setsublocality_level_2") {
               return sublocality_level_2(value.long_name);
             }
-            if(typeval==='locality'){
+            if (typeval === "locality") {
               return setCity(value.long_name);
             }
-            if(typeval==='landmark'){
+            if (typeval === "landmark") {
               return setlandMark(value.long_name);
             }
             return null;
-          })
+          });
           return null;
-        })
-
-        
+        });
 
         getLatLng(results[0]).then((value) => {
           setLng(value.lng);
@@ -265,7 +251,7 @@ function AddListing() {
     console.log(propertyType);
 
     if (propertyType === "Homes") {
-      setPropertyTypeF(Homes[0])
+      setPropertyTypeF(Homes[0]);
       let dd = Homes.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -278,7 +264,7 @@ function AddListing() {
     }
 
     if (propertyType === "Plot") {
-      setPropertyTypeF(Plots[0])
+      setPropertyTypeF(Plots[0]);
       let ddd = Plots.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -291,7 +277,7 @@ function AddListing() {
     }
 
     if (propertyType === "Commercial") {
-      setPropertyTypeF(Commercial[0])
+      setPropertyTypeF(Commercial[0]);
       let dddd = Commercial.map((value, index) => {
         return (
           <option key={value} value={value}>
@@ -328,10 +314,7 @@ function AddListing() {
           </p>
 
           <div>
-            <label
-              for="purpose"
-              className="text-sm font-medium "
-            >
+            <label for="purpose" className="text-sm font-medium ">
               Purpose <span className="text-red-900">*</span>
             </label>
 
@@ -373,10 +356,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="PropertyType"
-              className="text-sm font-medium "
-            >
+            <label for="PropertyType" className="text-sm font-medium ">
               Property Type <span className="text-red-900">*</span>
             </label>
 
@@ -447,10 +427,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="email"
-              className="text-sm font-medium "
-            >
+            <label for="email" className="text-sm font-medium ">
               Location <span className="text-red-900">*</span>
             </label>
             <PlacesAutocomplete
@@ -497,7 +474,8 @@ function AddListing() {
                   </div>
                 </div>
               )}
-            </PlacesAutocomplete><span class="mt-3 text-red-900 font-black">{ASmessage}</span>
+            </PlacesAutocomplete>
+            <span class="mt-3 text-red-900 font-black">{ASmessage}</span>
           </div>
 
           <p className="text-xl font-semibold font-medium  dark:text-white decoration-gray-500 decoration-wavy">
@@ -505,10 +483,7 @@ function AddListing() {
           </p>
 
           <div>
-            <label
-              for="AreaUnits"
-              className="pr-10 text-sm font-medium "
-            >
+            <label for="AreaUnits" className="pr-10 text-sm font-medium ">
               Area Units <span className="text-red-900">*</span>
             </label>
             <input
@@ -537,10 +512,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="AreaUnits"
-              className="pr-10 text-sm font-medium "
-            >
+            <label for="AreaUnits" className="pr-10 text-sm font-medium ">
               Occupancy Status <span className="text-red-900">*</span>
             </label>
 
@@ -557,10 +529,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="price"
-              className="block pr-10 text-sm font-medium "
-            >
+            <label for="price" className="block pr-10 text-sm font-medium ">
               Price (PKR) <span className="text-red-900">*</span>
             </label>
             <input
@@ -583,10 +552,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="price"
-              className="block pr-10 text-sm font-medium "
-            >
+            <label for="price" className="block pr-10 text-sm font-medium ">
               Bedrooms <span className="text-red-900">*</span>
             </label>
             <input
@@ -598,8 +564,6 @@ function AddListing() {
               onChange={handlebedrooms}
               className="mt-2 block w-[150px] rounded-lg border-gray-700 p-4 text-sm shadow-sm"
             />
-            
-            
           </div>
 
           <p className="text-xl font-semibold font-medium  dark:text-white decoration-gray-500 decoration-wavy">
@@ -607,10 +571,7 @@ function AddListing() {
           </p>
 
           <div>
-            <label
-              for="title"
-              className="pr-10 text-sm font-medium "
-            >
+            <label for="title" className="pr-10 text-sm font-medium ">
               Property Title <span className="text-red-900">*</span>
             </label>
             <input
@@ -625,10 +586,7 @@ function AddListing() {
           </div>
 
           <div>
-            <label
-              for="title"
-              className="pr-10 text-sm font-medium "
-            >
+            <label for="title" className="pr-10 text-sm font-medium ">
               Description <span className="text-red-900">*</span>
             </label>
             <textarea
@@ -642,10 +600,24 @@ function AddListing() {
             ></textarea>
           </div>
 
-          
-    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 " for="file_input">Upload Property Photo<span className="text-red-900">*</span></label>
-    <input onChange={(e)=>{setImage(e.target.files[0]);console.log(e.target.files[0])}} className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" accept=' .png, .jpeg, .jpg' required/>
-      {/* <div onClick={sendImage}>SEND IMAGE</div> */}
+          <label
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 "
+            for="file_input"
+          >
+            Upload Property Photo<span className="text-red-900">*</span>
+          </label>
+          <input
+            onChange={(e) => {
+              setImage(e.target.files[0]);
+              console.log(e.target.files[0]);
+            }}
+            className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            id="file_input"
+            type="file"
+            accept=" .png, .jpeg, .jpg"
+            required
+          />
+          {/* <div onClick={sendImage}>SEND IMAGE</div> */}
 
           <button
             type="submit"

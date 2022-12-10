@@ -1,13 +1,13 @@
-import React, { useState,useContext } from "react";
-import { supabase } from '../supabaseClient'
-import { LoginContext } from '../Contexts/LoginContext';
-import {useNavigate} from 'react-router-dom'
+import React, { useState, useContext } from "react";
+import { supabase } from "../supabaseClient";
+import { LoginContext } from "../Contexts/LoginContext";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
-
   const navigate = useNavigate();
 
-  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+  const { loggedIn, SetloggedIn, userID, userType, setuserID, setuserType } =
+    useContext(LoginContext);
 
   const [firstname, setfirstname] = useState(String);
   const [lastname, setlastname] = useState(String);
@@ -18,10 +18,9 @@ function Signup() {
   const [phonenum, setphonenum] = useState(String);
   const [address, setaddress] = useState(String);
   const [who, setwho] = useState(String);
-  
 
-  const[AlreadyRegisteredError,SetError] = useState(String);
-  const[successMessage,setSuccess] = useState(String)
+  const [AlreadyRegisteredError, SetError] = useState(String);
+  const [successMessage, setSuccess] = useState(String);
 
   const handlefname = (e) => {
     setfirstname(e.target.value);
@@ -48,54 +47,47 @@ function Signup() {
     setaddress(e.target.value);
   };
 
-  const getSessions = async ()=>{
+  const getSessions = async () => {
     const { data, error } = await supabase.auth.getSession();
-    if(error===null&&data.session!==null){
+    if (error === null && data.session !== null) {
       setuserID(data.session.user.id);
       setuserType("Member");
       SetloggedIn(true);
 
-      setTimeout(()=>{
-        navigate("/HomePage")
-      },1500)
-      
-    }
-    else{
+      setTimeout(() => {
+        navigate("/HomePage");
+      }, 1500);
+    } else {
       SetloggedIn(false);
       navigate("/signin");
     }
-    console.log(data.session.user.id,error);
-  }
+    console.log(data.session.user.id, error);
+  };
 
-  const login = async ()=>{
-
-    const { user, session, error } =  await supabase.auth.signInWithPassword({
+  const login = async () => {
+    const { user, session, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
+    });
 
-    console.log(user,session,error);
+    console.log(user, session, error);
 
-    if(error===null){
+    if (error === null) {
       getSessions();
-    }
-    else{
+    } else {
       console.log(error.message);
     }
+  };
 
-  }
- 
   const handlesubmit = async (e) => {
-  
     SetError("");
-    setSuccess("")
+    setSuccess("");
 
     e.preventDefault();
-    const d = new Date()
+    const d = new Date();
     const sold = 0;
-    
 
-    if(password!==confirmpassword){
+    if (password !== confirmpassword) {
       SetError("Password Dont Match");
       return;
     }
@@ -103,57 +95,52 @@ function Signup() {
     const { dataa, error } = await supabase.auth.signUp({
       email: email,
       password: password,
-    })
+    });
 
     console.log(error);
 
-    if(error){
-     SetError(error.message); 
-     return;
+    if (error) {
+      SetError(error.message);
+      return;
     }
 
-    const { data } = await supabase.auth.getUser()
+    const { data } = await supabase.auth.getUser();
 
-    if(data==null){
-      SetError("Server Failed to recieve recently signed up user. Try Signing in with current details."); 
-      console.log("Failed to recieve DATA")
+    if (data == null) {
+      SetError(
+        "Server Failed to recieve recently signed up user. Try Signing in with current details."
+      );
+      console.log("Failed to recieve DATA");
       return;
     }
 
     // console.log('Got User: ',data.user);
 
     const recentUser = data.user;
-    
+
     // console.log(recentUser);
 
-    if(recentUser){
-
+    if (recentUser) {
       console.log("ADDING");
 
-      const {data,error} = await supabase.from('users')
-      .insert({
-        user_id:recentUser.id,
-        email:email,
-        first_name:firstname,
-        last_name:lastname,
-        phone_number:phonenum,
-        city:city,
-        password:password,
-        joined_date:d,
-        address:address,
-        }) 
+      const { data, error } = await supabase.from("users").insert({
+        user_id: recentUser.id,
+        email: email,
+        first_name: firstname,
+        last_name: lastname,
+        phone_number: phonenum,
+        city: city,
+        password: password,
+        joined_date: d,
+        address: address,
+      });
 
-        if(error)
-          SetError(error.message);
-
-        else{
-          setSuccess("Successully Signed Up")
-          login();
-        }
-        
-
+      if (error) SetError(error.message);
+      else {
+        setSuccess("Successully Signed Up");
+        login();
+      }
     }
-
   };
 
   return (
@@ -631,31 +618,48 @@ function Signup() {
                   Create an account
                 </button>
 
-                
-
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   Already have an account?
                   <a href="\signin" className="text-gray-700 underline">
                     Log in
                   </a>
-                  
                 </p>
               </div>
 
-              {(AlreadyRegisteredError)?(<div role="alert" className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-red-500 bg-red-50 p-4">
-                  <strong className="block font-medium text-red-700"> Something went wrong </strong>
+              {AlreadyRegisteredError ? (
+                <div
+                  role="alert"
+                  className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-red-500 bg-red-50 p-4"
+                >
+                  <strong className="block font-medium text-red-700">
+                    {" "}
+                    Something went wrong{" "}
+                  </strong>
 
-                    <p className="mt-1 text-sm text-red-700">
+                  <p className="mt-1 text-sm text-red-700">
                     {AlreadyRegisteredError}
-                    </p>
-                  </div>):(<div></div>)}
-              {(successMessage)?(<div role="alert" className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-green-500 bg-green-50 p-4">
-              <strong className="block font-medium text-green-700"> Success! </strong>
+                  </p>
+                </div>
+              ) : (
+                <div></div>
+              )}
+              {successMessage ? (
+                <div
+                  role="alert"
+                  className=" col-span-6 sm:flex sm:items-center sm:gap-4 rounded border-l-14 border-green-500 bg-green-50 p-4"
+                >
+                  <strong className="block font-medium text-green-700">
+                    {" "}
+                    Success!{" "}
+                  </strong>
 
-                <p className="mt-1 text-sm text-green-700">
-                {successMessage}
-                </p>
-              </div>):(<div></div>)}
+                  <p className="mt-1 text-sm text-green-700">
+                    {successMessage}
+                  </p>
+                </div>
+              ) : (
+                <div></div>
+              )}
             </form>
           </div>
         </main>

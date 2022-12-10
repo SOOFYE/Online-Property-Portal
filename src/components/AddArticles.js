@@ -1,81 +1,74 @@
 import React, { useState, useContext } from "react";
 import { supabase } from "../supabaseClient";
-import { LoginContext } from '../Contexts/LoginContext';
-import { useNavigate } from 'react-router-dom'
+import { LoginContext } from "../Contexts/LoginContext";
+import { useNavigate } from "react-router-dom";
 
 function AddArticles() {
-
   const navigate = useNavigate();
 
-  const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
+  const { loggedIn, SetloggedIn, userID, userType, setuserID, setuserType } =
+    useContext(LoginContext);
 
   const [selectedImage, setImage] = useState(undefined);
-  const [Heading,setHeading] = useState("");
-  const [metaTitle,setmetaTitle] = useState("");
-  const [content,setContent] = useState("");
-  const [category,setCategory] = useState("");
-  
+  const [Heading, setHeading] = useState("");
+  const [metaTitle, setmetaTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
 
-  const handleHeading = (e)=>{
+  const handleHeading = (e) => {
     setHeading(e.target.value);
-  }
-  const handlemetaTitle = (e)=>{
+  };
+  const handlemetaTitle = (e) => {
     setmetaTitle(e.target.value);
-  }
-  const handleContent = (e)=>{
+  };
+  const handleContent = (e) => {
     setContent(e.target.value);
-  }
-  const handleCategory = (e)=>{
+  };
+  const handleCategory = (e) => {
     setCategory(e.target.value);
-  }
+  };
 
-  const Getimageurl = (imagepath) =>{
-    return new Promise(function(resolve,reject){
-      const { data } = supabase.storage.from('blog-bucket').getPublicUrl(imagepath)
-      if(data!=null)
-      resolve(data.publicUrl);
-      else
-      reject('Image Path invalid!');
-    })
-  }
+  const Getimageurl = (imagepath) => {
+    return new Promise(function (resolve, reject) {
+      const { data } = supabase.storage
+        .from("blog-bucket")
+        .getPublicUrl(imagepath);
+      if (data != null) resolve(data.publicUrl);
+      else reject("Image Path invalid!");
+    });
+  };
 
-  const handleSubmit = async (e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const val = await supabase.auth.getSession();
 
+    supabase.storage
+      .from("blog-bucket")
+      .upload(`UUID${selectedImage.name}` + Math.random(), selectedImage)
+      .then((value) => {
+        console.log("SENT!: ", value);
 
-    supabase.storage.from('blog-bucket').upload(`UUID${selectedImage.name}`+Math.random(),selectedImage)
-    .then(value=>{
+        Getimageurl(value.data.path).then((value) => {
+          console.log("GOT URLL ", value);
 
-      console.log("SENT!: ",value);
-
-      Getimageurl(value.data.path).then((value)=>{
-        console.log("GOT URLL ",value);
-
-        supabase.from('Blog')
-        .insert({
-          Author_ID: val.data.session.user.id,
-          Title: Heading,
-          MetaTitle: metaTitle,
-          Category: category,
-          Content: content,
-          ImageUrl: value,
-        }).then((value)=>{
-          navigate('/MemberPortal/ViewArticles')
-          console.log("DATA SAVED",value);
-        })
-
-
-      })
-
-
-
-
-    })
-
-
-  }
+          supabase
+            .from("Blog")
+            .insert({
+              Author_ID: val.data.session.user.id,
+              Title: Heading,
+              MetaTitle: metaTitle,
+              Category: category,
+              Content: content,
+              ImageUrl: value,
+            })
+            .then((value) => {
+              navigate("/MemberPortal/ViewArticles");
+              console.log("DATA SAVED", value);
+            });
+        });
+      });
+  };
   return (
     <div className="col-span-12 px-4 py-14 sm:px-6 lg:px-8">
       <div className="">
@@ -87,8 +80,10 @@ function AddArticles() {
           All details are <b>necessary</b>
         </p>
 
-        <form onSubmit={handleSubmit}
-        className="mt-6  mb-0 space-y-4 rounded-lg p-8 shadow-2xl">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-6  mb-0 space-y-4 rounded-lg p-8 shadow-2xl"
+        >
           <p className="text-xl font-semibold font-medium underline dark:text-white decoration-gray-500 decoration-wavy">
             Article Details
           </p>
@@ -135,61 +130,78 @@ function AddArticles() {
             </label>
           </div>
 
-  <div>
-      <label
-    for="Category"
-    class="relative block overflow-hidden rounded-md border border-gray-200 px-3 pt-3 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-  >
-    <select
-      
-      id="Category"
-      placeholder="Category"
-      class="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      value={category}
-      onChange={handleCategory}
-      required
-    >
-    <option selected value="">Choose a category</option>
-    <option value="Business">Business</option>
-    <option value="Politics">Politics</option>
-    <option value="Entertainment">Entertainment</option>
-    <option value="Technology">Technology</option>
-    <option value="Religion">Religion</option>
-    </select>
-
-    <span
-      class="absolute left-3 top-2 -translate-y-1/2 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs"
-    >
-      Category
-    </span>
-  </label>
-  </div>
-
           <div>
-          <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Content</label>
-          <textarea 
-          id="message" 
-          rows="4" 
-          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-          placeholder="Content..."
-          value={content}
-          onChange={handleContent}
-          ></textarea>
+            <label
+              for="Category"
+              class="relative block overflow-hidden rounded-md border border-gray-200 px-3 pt-3 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+            >
+              <select
+                id="Category"
+                placeholder="Category"
+                class="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={category}
+                onChange={handleCategory}
+                required
+              >
+                <option selected value="">
+                  Choose a category
+                </option>
+                <option value="Business">Business</option>
+                <option value="Politics">Politics</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Technology">Technology</option>
+                <option value="Religion">Religion</option>
+              </select>
+
+              <span class="absolute left-3 top-2 -translate-y-1/2 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs">
+                Category
+              </span>
+            </label>
           </div>
 
-        <div>
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 " for="file_input">Upload Property Photo</label>
-          <input onChange={(e)=>{setImage(e.target.files[0]);console.log(e.target.files[0])}} className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" accept=' .png, .jpeg, .jpg' required/>
-        </div>
+          <div>
+            <label
+              for="message"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+            >
+              Content
+            </label>
+            <textarea
+              id="message"
+              rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Content..."
+              value={content}
+              onChange={handleContent}
+            ></textarea>
+          </div>
 
-        <button
+          <div>
+            <label
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 "
+              for="file_input"
+            >
+              Upload Property Photo
+            </label>
+            <input
+              onChange={(e) => {
+                setImage(e.target.files[0]);
+                console.log(e.target.files[0]);
+              }}
+              className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              id="file_input"
+              type="file"
+              accept=" .png, .jpeg, .jpg"
+              required
+            />
+          </div>
+
+          <button
             type="submit"
             className="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
           >
             Create Article
-        </button>
-
-
+          </button>
         </form>
       </div>
     </div>

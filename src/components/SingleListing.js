@@ -23,12 +23,6 @@ function SingleListing() {
 
   const navigate = useNavigate()
 
-  
-
-  //const propertyid = "e5e35203-ba6a-406b-aa95-4b45eb98c0a8"; //send trhoguh url
-
-  const currentuser = "2e0ef298-f57d-4223-b1c7-14200f2414e0" //we will have this when user logges in
-  //const currentuser = "47a6cf34-4c31-4209-8c7a-b58f554a9039" //adimin id
 
 
   const {loggedIn,SetloggedIn,userID,userType,setuserID,setuserType} = useContext(LoginContext);
@@ -222,17 +216,6 @@ else console.log(data)
         setProps(defaultProps)
         console.log(value);
 
-
-        // axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${value.data[0].lati}%2C${value.data[0].lngi}&radius=1500&type=restaurant&keyword=${value.data[0].propertycity}&key=AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc`
-        // ,{headers: { 
-
-        //   'Access-Control-Allow-Origin' : '*',
-        //   'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        // }}).then(value=>console.log("NEARBY: ",value))
-        // .catch(error=>console.log("NEARBY ERROR: ",error))
-
-        //setnearbyplaces(FetchNearby(value.data[0].lati,value.data[0].lngi));
-        //console.log(nearbyplaces);
       });
 
       supabase.auth.getSession().then((value)=>{
@@ -553,7 +536,7 @@ else console.log(data)
           options={{
               styles: [{ stylers: [{ 'saturation': 50 }, { 'gamma': 0.5 }] }]
         }}
-        bootstrapURLKeys={{ key: "AIzaSyCfRAQfZ8V5uzxBHy6D8fg9fxuUX125dXc" }}
+        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_API_KEY }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
       >
